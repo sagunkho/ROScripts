@@ -1,0 +1,52 @@
+---
+ src/map/mob.c    | 2 ++
+ src/map/mob.h    | 2 +-
+ src/map/script.c | 2 ++
+ 3 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/src/map/mob.c b/src/map/mob.c
+index bede7de..d522925 100644
+--- a/src/map/mob.c
++++ b/src/map/mob.c
+@@ -4266,11 +4266,13 @@ int mob_read_db_sub(struct config_setting_t *mobt, int n, const char *source)
+ 	if (mob->lookup_const(mobt, "Exp", &i32) && i32 >= 0) {
+ 		int64 exp = apply_percentrate64(i32, battle_config.base_exp_rate, 100);
+ 		md.base_exp = (unsigned int)cap_value(exp, 0, UINT_MAX);
++		md.base_exp_orig = i32;
+ 	}
+
+ 	if (mob->lookup_const(mobt, "JExp", &i32) && i32 >= 0) {
+ 		int64 exp = apply_percentrate64(i32, battle_config.job_exp_rate, 100);
+ 		md.job_exp = (unsigned int)cap_value(exp, 0, UINT_MAX);
++		md.job_exp_orig = i32;
+ 	}
+
+ 	if (mob->lookup_const(mobt, "AttackRange", &i32) && i32 >= 0) {
+diff --git a/src/map/mob.h b/src/map/mob.h
+index 60bc4b8..ca5c20f 100644
+--- a/src/map/mob.h
++++ b/src/map/mob.h
+@@ -143,7 +143,7 @@ struct spawn_info {
+ struct mob_db {
+ 	int mob_id;
+ 	char sprite[NAME_LENGTH],name[NAME_LENGTH],jname[NAME_LENGTH];
+-	unsigned int base_exp,job_exp;
++	unsigned int base_exp,job_exp,base_exp_orig,job_exp_orig;
+ 	unsigned int mexp;
+ 	short range2,range3;
+ 	short race2; // celest
+diff --git a/src/map/script.c b/src/map/script.c
+index 353d57a..5246bc0 100644
+--- a/src/map/script.c
++++ b/src/map/script.c
+@@ -13157,6 +13157,8 @@ BUILDIN(strmobinfo)
+ 		case 5: script_pushint(st,mob->db(class_)->status.max_sp); break;
+ 		case 6: script_pushint(st,mob->db(class_)->base_exp); break;
+ 		case 7: script_pushint(st,mob->db(class_)->job_exp); break;
++		case 8: script_pushint(st,mob->db(class_)->base_exp_orig); break;
++		case 9: script_pushint(st,mob->db(class_)->job_exp_orig); break;
+ 		default:
+ 			script_pushint(st,0);
+ 			break;
+--
+2.8.1
