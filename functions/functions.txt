@@ -1,0 +1,25 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * _______ _______  _____  _     _ _______ _     _ __   __ ______  *
+ * |______ |  |  | |     | |____/  |______  \___/    \_/    ____/  *
+ * ______| |  |  | |_____| |    \_ |______ _/   \_    |    /_____  *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+ *                                                                 *
+ * Helpful Functions                                               *
+ * Script Version 1.0                                              *
+ * Credits : Smokexyz [sagunxp@gmail.com]                          *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *    int formatting function                          *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+// this may have been written by someone other than me.
+// I can’t remember who, if the author is found, please push a PR.
+function	script	int__	{
+	.@i = getstrlen( .@str$ = getarg(0) ) -3;
+	.@is_negative = charat( .@str$, 0 ) == "-";
+	while ( .@i > .@is_negative ) {
+		.@str$ = insertchar( .@str$, ",", .@i );
+		.@i -= 3;
+	}
+	return .@str$;
+}
