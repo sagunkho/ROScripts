@@ -1,0 +1,65 @@
+/* * * * * * * * * * * 
+ * iRO Bounty Missions
+ * - http://irowiki.org/wiki/Bounty_Board_Quests
+ * 
+ * ------- V 1.0 ------
+ * Official iRO renewal repeatable Bounty Missions
+ * --------------------
+ * Credits: Smokexyz [sagunxp@gmail.com]
+ * * * * * * * * * * */
+
+yuno,207,143,4	script	Bounty Board 70-110#yun	2_BULLETIN_BOARD,{
+	setarray .@questId[0],62556 // Goat
+						,62557 // Harpy
+						,62558 // Sleeper
+						,62559; // Grand Peco
+	setarray .@mobId[0],1372 // Goat
+						,1376 // Harpy
+						,1386 // Sleeper
+						,1369; // Grand Peco
+	callfunc "F_BountyBoard",.@questId,.@mobId,.min_lvl,.max_lvl;
+	end;
+
+OnPCLoadMapEvent:
+	if (strcharinfo(3) == strnpcinfo(4)
+		&& (BaseLevel >= .min_lvl && BaseLevel <= .max_lvl))
+	showevent 1,1;
+	end;
+
+OnInit:
+	set .min_lvl,70;
+	set .max_lvl,110;
+	end;
+}
+
+yuno,208,142,4	script	Bounty Board 101-150#yun	2_BULLETIN_BOARD,{
+	setarray .@questId[0],62710 // Deleter (Ground)
+						,62711 // Deleter (Sky)
+						,62712 // Nightmare Terror
+						,62713 // Purple Venatu
+						,62714 // Green Venatu
+						,62715 // Orange Venatu
+						,62716 // Blue Venatu
+						,62717; // Apocalypse
+	setarray .@mobId[0],1385 // Deleter (Ground)
+						,1384 // Deleter (Sky)
+						,1379 // Nightmare Terror
+						,1676 // Purple Venatu
+						,1677 // Green   "
+						,1678 // Orange  "
+						,1679 // Blue    "
+						,1365; // Apocalypse
+	callfunc "F_BountyBoard",.@questId,.@mobId,.min_lvl,.max_lvl;
+	end;
+
+OnPCLoadMapEvent:
+	if (strcharinfo(3) == strnpcinfo(4)
+		&& (BaseLevel >= .min_lvl && BaseLevel <= .max_lvl))
+	showevent 1,1;
+	end;
+
+OnInit:
+	set .min_lvl,101;
+	set .max_lvl,150;
+	end;
+}

@@ -1,0 +1,61 @@
+/* * * * * * * * * * * 
+ * iRO Bounty Missions
+ * - http://irowiki.org/wiki/Bounty_Board_Quests
+ * 
+ * ------- V 1.0 ------
+ * Official iRO renewal repeatable Bounty Missions
+ * --------------------
+ * Credits: Smokexyz [sagunxp@gmail.com]
+ * * * * * * * * * * */
+
+comodo,104,136,4	script	Bounty Board 40-60#com	2_BULLETIN_BOARD,{
+	setarray .@questId[0],62617 // Thara Frog
+						,62618 // Sea Otter
+						,62619 // Seal
+						,62620 // Raggler
+						,62621 // Grove
+						,62622 // Alligator
+						,62809; // Flora
+	setarray .@mobId[0],1034 // Thara Frog
+						,1323 // Sea Otter
+						,1317 // Seal
+						,1254 // Raggler
+						,1687 // Grove
+						,1271 // Alligator
+						,1118; // Flora
+	callfunc "F_BountyBoard",.@questId,.@mobId,.min_lvl,.max_lvl;
+	end;
+
+OnPCLoadMapEvent:
+	if (strcharinfo(3) == strnpcinfo(4)
+		&& (BaseLevel >= .min_lvl && BaseLevel <= .max_lvl))
+	showevent 1,1;
+	end;
+
+OnInit:
+	set .min_lvl,40;
+	set .max_lvl,60;
+	end;
+}
+
+comodo,106,136,4	script	Bounty Board 60-105#com	2_BULLETIN_BOARD,{
+	setarray .@questId[0],62623 // Golem
+						,62624 // Stalactic Golem
+						,62625; // Medusa
+	setarray .@mobId[0],1040 // Golem
+						,1278 // Stalactic  Golem
+						,1148; // Medusa
+	callfunc "F_BountyBoard",.@questId,.@mobId,.min_lvl,.max_lvl;
+	end;
+
+OnPCLoadMapEvent:
+	if (strcharinfo(3) == strnpcinfo(4)
+		&& (BaseLevel >= .min_lvl && BaseLevel <= .max_lvl))
+	showevent 1,1;
+	end;
+
+OnInit:
+	set .min_lvl,60;
+	set .max_lvl,105;
+	end;
+}

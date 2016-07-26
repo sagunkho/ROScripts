@@ -1,0 +1,37 @@
+/* * * * * * * * * * * 
+ * iRO Bounty Missions
+ * - http://irowiki.org/wiki/Bounty_Board_Quests
+ * 
+ * ------- V 1.0 ------
+ * Official iRO renewal repeatable Bounty Missions
+ * --------------------
+ * Credits: Smokexyz [sagunxp@gmail.com]
+ * * * * * * * * * * */
+
+brasilis,190,224,4	script	Bounty Board 70-175#bra	2_BULLETIN_BOARD,{
+	setarray .@questId[0],62603 // Curupira
+						,62604 // Headless Mule
+						,62605 // Jaguar
+						,62606 // Toucan
+						,62607 // Piranha
+						,62608; // Iara
+	setarray .@mobId[0],2074 // Curupira
+						,2071 // Headless Mule
+						,2072 // Jaguar
+						,2073 // Toucan
+						,2070 // Piranha
+						,2069; // Iara
+	callfunc "F_BountyBoard",.@questId,.@mobId,.min_lvl,.max_lvl;
+	end;
+
+OnPCLoadMapEvent:
+	if (strcharinfo(3) == strnpcinfo(4)
+		&& (BaseLevel >= .min_lvl && BaseLevel <= .max_lvl))
+	showevent 1,1;
+	end;
+
+OnInit:
+	set .min_lvl,70;
+	set .max_lvl,175;
+	end;
+}

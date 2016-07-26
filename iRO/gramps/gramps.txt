@@ -1,0 +1,2001 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * _______ _______  _____  _     _ _______ _     _ __   __ ______  *
+ * |______ |  |  | |     | |____/  |______  \___/    \_/    ____/  *
+ * ______| |  |  | |_____| |    \_ |______ _/   \_    |    /_____  *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *                                                                 *
+ * iRO Gramps [Automated]                                          *
+ * Script Version 2.1                                              *
+ * Credits : Smokexyz [sagunxp@gmail.com]                          *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * V1.0 - Made back in 2013
+ * -------------------------------
+ * - Official Quests Supported :
+ * --- 17 x 100 Hunting Quests
+ * --- 24 x 200 Hunting Quests
+ * --- 108 x 400 Hunting Quests
+ * -------------------------------
+ * - Quests are ordered by level of the players
+ *   from 70 ~ 150.
+ * - 400 Hunting Quests organised and randomised by map.
+ *   Automated to select a new quest for each category every 3 days.
+ * - Supports a custom Happy Hour feature with randomised bonus rates.
+ * - Automatically increases mob spawn in maps of the selected quests.
+ * ------------v2.1-------------------
+ * - Added support for premium Exp combination of Base/Job.
+ * - Fixed a bug with per Mob Exp where both mob and quest exp were
+ *	 affected by rates. Using custom strmobinfo(8/9) for original exp.
+ * - Fixed display of Exp in string format.
+ * - Fixed bug with reset stone, it will now delete all cool-downs and
+ *   current un-submitted quests.
+ *
+ * Note that this does not completely emulate 100% iRO gramps;
+ * iRO switched quest level categories to 3 from 4. This will
+ * be changed later.
+ * * * * * * * * * * * * * * * * * * * */
+
+moc_para01,29,35,4	script	Gramps	4_M_LGTGRAND,{
+
+	// - Start of the awesomeness.
+	set .@name$,"[ ^339933Gramps^000000 ]";
+	mes .@name$;
+	mes "When you get to being my age, you become bitter.";
+	mes "Too long I've done nothing about the monsters that roam around Rune Midgard.";
+	next;
+	mes .@name$;
+	mes "That's why I'm asking you wippersnappers to help me hunt some monsters.";
+	mes "Will you help me young adventurer?";
+	next;
+	if(BaseLevel < 70) {
+		mes .@name$;
+		mes "Well, my dear, you'll need to be atleast level 70 before doing my missions.";
+		close;
+	}
+	set .@mainmenu$,"- Yes, I'll help:- ^993300Can you warp me?^000000:- ^009900Can you reward me?^000000:- ^FF0000Can you erase the timer?^000000:- What missions are you giving?:- Cancel";
+	switch(select(.@mainmenu$)) {
+		case 1:
+				goto Lhuntmenu;
+				close;
+		case 2:
+				/*set .@vip,isvip();*/
+				if(BaseLevel >= 70 && BaseLevel <= 90) {
+					set .@dest$,.maps7090$[$currentrand7090];
+					set .@destx,.mapx7090[$currentrand7090];
+					set .@desty,.mapy7090[$currentrand7090];
+					set .@location$,.location7090$[$currentrand7090];
+					set .@zenyreq,5000;
+				}
+				else if(BaseLevel >= 91 && BaseLevel <= 110) {
+					set .@dest$,.maps91110$[$currentrand91110];
+					set .@destx,.mapx91110[$currentrand91110];
+					set .@desty,.mapy91110[$currentrand91110];
+					set .@location$,.location91110$[$currentrand91110];
+					set .@zenyreq,7500;
+				}
+				else if(BaseLevel >= 111 && BaseLevel <= 130) {
+					set .@dest$,.maps111130$[$currentrand111130];
+					set .@destx,.mapx111130[$currentrand111130];
+					set .@desty,.mapy111130[$currentrand111130];
+					set .@location$,.location111130$[$currentrand111130];
+					set .@zenyreq,10000;
+				}
+				else if(BaseLevel >= 131 && BaseLevel <= 150) {
+					set .@dest$,.maps131150$[$currentrand131150];
+					set .@destx,.mapx131150[$currentrand131150];
+					set .@desty,.mapy131150[$currentrand131150];
+					set .@location$,.location131150$[$currentrand131150];
+					set .@zenyreq,12500;
+				}
+				else
+					set .@dest$,"";
+				/* if(.@vip) set .@zenyreq,0; // No Zeny Requirement for VIP's. */
+				if(.@dest$ == "") {
+					mes .@name$;
+					mes "You're not in the level range that I provide my services to.";
+					close;
+				}
+				mes .@name$;
+				mes "Your mission's location :";
+				mes "^993300"+.@location$+"^000000";
+				mes " ";
+				if(.@zenyreq){
+						mes "This service will cost you "+.@zenyreq+" Zeny.";
+						mes "Would you like to proceed?";
+						next;
+						if(select("- Proceed","- Cancel") == 2) close;
+						set Zeny,Zeny - .@zenyreq;
+				}
+				next;
+				mes .@name$;
+				mes "You will now be warped to :";
+				mes "^993300"+.@location$+"^000000";
+				mes " ";
+				mes "Please close this dialog to proceed.";
+				close2;
+				warp ""+.@dest$,.@destx,.@desty;
+				end;
+		case 3:
+			mes .@name$;
+			mes "I'll check for all of the missions that I've given so far.";
+			next;
+			//	Complete quest if available
+			if (questprogress(hunt100,HUNTING) == 2)
+				goto Lstartquest100;
+			else if (questprogress(hunt200,HUNTING) == 2)
+				goto Lstartquest200;
+			else if (questprogress(hunt400_1,HUNTING) == 2)
+				goto Lstartquest400_1;
+			else if (questprogress(hunt400_2,HUNTING) == 2)
+				goto Lstartquest400_2;
+			else if (questprogress(hunt400_3,HUNTING) == 2)
+				goto Lstartquest400_3;
+			else
+			{
+				mes .@name$;
+				mes "You don't have any completed quests to submit.";
+			}
+			close;
+		case 4:
+				set .@CDquestId,60574;
+				set .@reset_time,questprogress(.@CDquestId,PLAYTIME);
+				if (.@reset_time == 0) {
+					mes .@name$;
+					mes "To reset your quest cool-downs I will require 1x ^ff0000"+getitemname(6320)+"^000000.";
+					mes " ";
+					next;
+					mes "- Once used, the stones ^FF0000will erase all active un-submitted quests^000000 and the cool-downs for all quest categories. If you haven't completed a quest, you're advised to do so before proceeding -";
+					next;
+					if (select("- Cancel","- Use ^FF0000Reset Stone^000000.") == 1) close;
+					if (countitem(6320) < 1) {
+						mes .@name$;
+						mes "You do not have any ^FF0000Reset Stones^000000, please come back when you do.";
+						close;
+					}
+					mes .@name$;
+					mes "Your quest cool-downs have been removed.";
+					delitem 6320,1;
+					if(questprogress(60444,PLAYTIME) != 0) erasequest 60444;
+					if(questprogress(60448,PLAYTIME) != 0) erasequest 60448;
+					if(questprogress(60449,PLAYTIME) != 0) erasequest 60449;
+					if(questprogress(60450,PLAYTIME) != 0) erasequest 60450;
+					if(questprogress(60486,PLAYTIME) != 0) erasequest 60486;
+					if(questprogress(hunt100,HUNTING) != 0) erasequest hunt100;
+					if(questprogress(hunt200,HUNTING) != 0) erasequest hunt200;
+					if(questprogress(hunt400_1,HUNTING) != 0) erasequest hunt400_1;
+					if(questprogress(hunt400_2,HUNTING) != 0) erasequest hunt400_2;
+					if(questprogress(hunt400_3,HUNTING) != 0) erasequest hunt400_3;
+					set hunt100,0;
+					set hunt100bexp,0;
+					set hunt100jexp,0;
+					set hunt200,0;
+					set hunt200bexp,0;
+					set hunt200bexp,0;
+					set hunt400_1,0;
+					set hunt400_1bexp,0;
+					set hunt400_1jexp,0;
+					set hunt400_2,0;
+					set hunt400_2bexp,0;
+					set hunt400_2jexp,0;
+					set hunt400_3,0;
+					set hunt400_3bexp,0;
+					set hunt400_3jexp,0;
+					setquest .@CDquestId;
+					close;
+				}
+				else if (.@reset_time == 1) {
+					mes .@name$;
+					mes "You must wait until the Reset Stone Timer expires to reset your cool-downs again.";
+					close;
+				}
+				else if (.@reset_time == 2) {
+					mes .@name$;
+					mes "Oh I see that your Reset Stone Timer has expired.";
+					next;
+					mes .@name$;
+					mes "There, now you can reset your cool-downs again.";
+					erasequest 60574;
+					close;
+				}
+				close;
+		case 5:
+				mes .@name$;
+				mes "I'm giving several hunting missions.";
+				next;
+				mes .@name$;
+				mes "This week's monster areas are :";
+				mes "70-90 at "+.location7090$[$currentrand7090]+".";
+				mes "91-110 at "+.location91110$[$currentrand91110]+".";
+				mes "111-130 at "+.location111130$[$currentrand111130]+".";
+				mes "131-150 at "+.location131150$[$currentrand131150]+".";
+				close;
+		default:
+				close;
+	}
+
+
+Lhuntmenu:
+	menu "Hunt ^FF0000100 Monsters^000000!",Lh100,"Hunt ^FF0000200 Monsters^000000!",Lh200,"Hunt ^FF0000400 Monsters^000000!",Lh400;
+
+L_notapplicable:
+	mes .@name$;
+	mes "I'm sorry, I have nothing to offer you at this point.";
+	close;
+
+Lh100:
+	if (hunt100) goto Lstartquest100; // If already has quest, skip the rest.
+	mes .@name$;
+	mes "So then, which of these monsters would you like to hunt?";
+	next;
+	if(BaseLevel >= 70 && BaseLevel <= 90)
+		set .@case,1;
+	else if(BaseLevel >= 91 || BaseLevel <= 110)
+		set .@case,2;
+	else if(BaseLevel >= 111 || BaseLevel <= 130)
+		set .@case,3;
+	else if(BaseLevel >= 131 || BaseLevel <= 150)
+		set .@case,4;
+	else
+		goto L_notapplicable;
+	switch(.@case) {
+		case 1:
+			switch(select("Orc Archer Hunting","High Orc Hunting","Harpy Hunting")) {
+				case 1:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt100,60406;
+						set .@mobid,1189;
+						set hunt100bexp,strmobinfo(8,.@mobid);
+						set hunt100jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest100;
+
+				case 2:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt100,60408;
+						set .@mobid,1213;
+						set hunt100bexp,strmobinfo(8,.@mobid);
+						set hunt100jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest100;
+
+				case 3:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt100,60615;
+						set .@mobid,1376;
+						set hunt100bexp,strmobinfo(8,.@mobid);
+						set hunt100jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest100;
+
+				default:
+						close;
+			}
+		case 2:
+			switch (select("Ground Deleter Hunting","Nightmare Terror Hunting","Medusa Hunting")){
+				case 1:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt100,60427;
+						set .@mobid,1385;
+						set hunt100bexp,strmobinfo(8,.@mobid);
+						set hunt100jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest100;
+
+				case 2:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt100,60429;
+						set .@mobid,1379;
+						set hunt100bexp,strmobinfo(8,.@mobid);
+						set hunt100jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest100;
+
+				case 3:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt100,60617;
+						set .@mobid,1148;
+						set hunt100bexp,strmobinfo(8,.@mobid);
+						set hunt100jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest100;
+				default:
+						close;
+			}
+		case 3:
+			switch (select("Hodremlin Hunting","Vanberk Hunting","Isilla Hunting","Agav  Hunting")){
+				case 1:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt100,60414;
+						set .@mobid,1773;
+						set hunt100bexp,strmobinfo(8,.@mobid);
+						set hunt100jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest100;
+
+				case 2:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt100,60412;
+						set .@mobid,1771;
+						set hunt100bexp,strmobinfo(8,.@mobid);
+						set hunt100jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest100;
+
+				case 3:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt100,60410;
+						set .@mobid,1772;
+						set hunt100bexp,strmobinfo(8,.@mobid);
+						set hunt100jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest100;
+
+				case 4:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt100,60416;
+						set .@mobid,1769;
+						set hunt100bexp,strmobinfo(8,.@mobid);
+						set hunt100jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest100;
+
+				default:
+						close;
+			}
+		case 4:
+			switch (select("Laurell Weinder Hunting","Armeyer Dinze Hunting","Egnigem Cenia Hunting","Errende Ebecee  Hunting","Kavach Icarus Hunting","Wickebine Tres Hunting","Kasa Hunting")){
+				case 1:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt100,60431;
+						set .@mobid,1657;
+						set hunt100bexp,strmobinfo(8,.@mobid);
+						set hunt100jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest100;
+
+				case 2:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt100,60433;
+						set .@mobid,1654;
+						set hunt100bexp,strmobinfo(8,.@mobid);
+						set hunt100jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest100;
+
+				case 3:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt100,60435;
+						set .@mobid,1652;
+						set hunt100bexp,strmobinfo(8,.@mobid);
+						set hunt100jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest100;
+
+				case 4:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt100,60437;
+						set .@mobid,1655;
+						set hunt100bexp,strmobinfo(8,.@mobid);
+						set hunt100jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest100;
+
+				case 5:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt100,60439;
+						set .@mobid,1656;
+						set hunt100bexp,strmobinfo(8,.@mobid);
+						set hunt100jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest100;
+
+				case 6:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt100,60441;
+						set .@mobid,1653;
+						set hunt100bexp,strmobinfo(8,.@mobid);
+						set hunt100jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest100;
+
+				case 7:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt100,60619;
+						set .@mobid,1833;
+						set hunt100bexp,strmobinfo(8,.@mobid);
+						set hunt100jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest100;
+
+				default:
+						close;
+			}
+
+		default:
+				goto L_notapplicable;
+				close;
+	}
+
+Lh200:
+	if (hunt200) goto Lstartquest200; // If already has quest, skip the rest.
+	mes .@name$;
+	mes "So then, which of these monsters would you like to hunt?";
+	next;
+	if(BaseLevel >= 70 && BaseLevel <= 90)
+		set .@case,1;
+	else if(BaseLevel >= 91 || BaseLevel <= 110)
+		set .@case,2;
+	else if(BaseLevel >= 111 || BaseLevel <= 130)
+		set .@case,3;
+	else if(BaseLevel >= 131 || BaseLevel <= 150)
+		set .@case,4;
+	else
+		goto L_notapplicable;
+	switch(.@case) {
+		case 1:
+			switch (select("Orc Archer Hunting","High Orc Hunting","Harpy Hunting")) {
+				case 1:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt200,60407;
+						set .@mobid,1189;
+						set hunt200bexp,strmobinfo(8,.@mobid);
+						set hunt200jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest200;
+
+				case 2:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt200,60409;
+						set .@mobid,1213;
+						set hunt200bexp,strmobinfo(8,.@mobid);
+						set hunt200jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest200;
+
+				case 3:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt200,60616;
+						set .@mobid,1376;
+						set hunt200bexp,strmobinfo(8,.@mobid);
+						set hunt200jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest200;
+
+				default:
+						close;
+			}
+		case 2:
+			switch (select("Ground Deleter Hunting","Nightmare Terror Hunting","Medusa Hunting")){
+				case 1:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt200,60428;
+						set .@mobid,1385;
+						set hunt200bexp,strmobinfo(8,.@mobid);
+						set hunt200jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest200;
+
+				case 2:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt200,60430;
+						set .@mobid,1379;
+						set hunt200bexp,strmobinfo(8,.@mobid);
+						set hunt200jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest200;
+
+				case 3:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt200,60618;
+						set .@mobid,1148;
+						set hunt200bexp,strmobinfo(8,.@mobid);
+						set hunt200jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest200;
+				default:
+						close;
+			}
+		case 3:
+			switch (select("Hodremlin Hunting","Vanberk Hunting","Isilla Hunting","Agav  Hunting")){
+				case 1:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt200,60415;
+						set .@mobid,1773;
+						set hunt200bexp,strmobinfo(8,.@mobid);
+						set hunt200jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest200;
+
+				case 2:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt200,60413;
+						set .@mobid,1771;
+						set hunt200bexp,strmobinfo(8,.@mobid);
+						set hunt200jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest200;
+
+				case 3:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt200,60411;
+						set .@mobid,1772;
+						set hunt200bexp,strmobinfo(8,.@mobid);
+						set hunt200jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest200;
+
+				case 4:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt200,60417;
+						set .@mobid,1769;
+						set hunt200bexp,strmobinfo(8,.@mobid);
+						set hunt200jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest200;
+
+				default:
+						close;
+			}
+		case 4:
+			switch (select("Laurell Weinder Hunting","Armeyer Dinze Hunting","Egnigem Cenia Hunting","Errende Ebecee  Hunting","Kavach Icarus Hunting","Wickebine Tres Hunting","Kasa Hunting")){
+				case 1:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt200,60432;
+						set .@mobid,1657;
+						set hunt200bexp,strmobinfo(8,.@mobid);
+						set hunt200jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest200;
+
+				case 2:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt200,60434;
+						set .@mobid,1654;
+						set hunt200bexp,strmobinfo(8,.@mobid);
+						set hunt200jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest200;
+
+				case 3:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt200,60436;
+						set .@mobid,1652;
+						set hunt200bexp,strmobinfo(8,.@mobid);
+						set hunt200jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest200;
+
+				case 4:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt200,60438;
+						set .@mobid,1655;
+						set hunt200bexp,strmobinfo(8,.@mobid);
+						set hunt200jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest200;
+
+				case 5:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt200,60440;
+						set .@mobid,1656;
+						set hunt200bexp,strmobinfo(8,.@mobid);
+						set hunt200jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest200;
+
+				case 6:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt200,60442;
+						set .@mobid,1653;
+						set hunt200bexp,strmobinfo(8,.@mobid);
+						set hunt200jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest200;
+
+				case 7:
+						mes .@name$;
+						mes "Are you sure that you want to do this mission?";
+						next;
+
+						if (select("Proceed","Cancel") == 2) {
+							mes .@name$;
+							mes "There is no reason to hurry.";
+							mes "Once you've decided, I'll be right here.";
+							close;
+						}
+						set hunt200,60620;
+						set .@mobid,1833;
+						set hunt200bexp,strmobinfo(8,.@mobid);
+						set hunt200jexp,strmobinfo(9,.@mobid);
+						goto Lstartquest200;
+
+				default:
+						close;
+			}
+		default:
+				goto L_notapplicable;
+				close;
+	}
+
+Lh400:
+	if(BaseLevel > 150){
+		mes .@name$;
+		mes "I'm sorry but there are no more quests to be done for your level.";
+		close;
+	}
+	else if(BaseLevel < 70){
+		mes .@name$;
+		mes "I'm sorry but to do these quests you require a minimum of Base Level 70";
+		close;
+	}
+	//if(!isvip()) {
+		//	Complete quest if available
+		if (questprogress(hunt400_1,HUNTING) != 0){
+				goto Lstartquest400_1;
+		}
+		else if (questprogress(hunt400_2,HUNTING) != 0){
+				goto Lstartquest400_2;
+		}
+		else if (questprogress(hunt400_3,HUNTING) != 0){
+				goto Lstartquest400_3;
+		}
+	// }
+	if(BaseLevel >= 70 && BaseLevel <= 90)
+		set .@case,1;
+	else if(BaseLevel >= 91 && BaseLevel <= 110)
+		set .@case,2;
+	else if(BaseLevel >= 111 && BaseLevel <= 130)
+		set .@case,3;
+	else if(BaseLevel >= 131 && BaseLevel <= 150)
+		set .@case,4;
+	mes .@name$;
+	switch(.@case) {
+		case 1:
+				mes "Mission Location : ";
+				mes "^993300"+.location7090$[$currentrand7090]+"^000000";
+				mes " ";
+				mes "Please select a quest mission from the options below :";
+				//dispbottom ""+getd(".mobid7090_"+.@i+"["+$currentrand7090+"]");
+				for(set .@i,1; .@i <= 3; set .@i,.@i+1){
+					if(getd(".mobid7090_"+.@i+"["+$currentrand7090+"]")){
+						set .@menu$, .@menu$ + "Hunting ^993300"+strmobinfo(1,getd(".mobid7090_"+.@i+"["+$currentrand7090+"]"))+"^000000";
+						set .@menu$, .@menu$ + ":";
+					} else break;
+				}
+				next;
+				set .@qselect,select(.@menu$);
+				mes .@name$;
+				mes "^336633Quest Information^000000 :";
+				mes "Hunting ^993300"+strmobinfo(1,getd(".mobid7090_"+.@qselect+"["+$currentrand7090+"]"))+"^000000";
+				mes " ";
+				mes "^336633Exp per mob^000000 : "+callfunc("int__",.breward7090[.@qselect])+" / "+callfunc("int__",.jreward7090[.@qselect])+" Exp";
+				mes "^336633Reward on completion^000000 :";
+				mes "- "+callfunc("int__",.breward7090[.@qselect]*400)+" / "+callfunc("int__",.jreward7090[.@qselect]*400)+" Exp";
+				mes "- ^AA00FFEden Merit Badge^000000 x"+(/*isvip()?.Reward_MeritBadgeAmount_400_VIP:*/.Reward_MeritBadgeAmount_400);
+				mes "^336633Requirement^000000 :";
+				mes "You must hunt 400 of the required monsters and return.";
+				mes " ";
+				mes "^FF3333Hunting 400 quests will be changed every 3 days^000000";
+				next;
+				if (select("- Accept","- Decline") == 2){
+					mes .@name$;
+					mes "These special quests will change every 3 days, do come back to check on what's new!";
+					close;
+				}
+				if(getd("hunt400_"+.@qselect) <= 0){
+					setd "hunt400_"+.@qselect,getd(".quest7090_"+.@qselect+"["+$currentrand7090+"]");
+					setd "hunt400_"+.@qselect+"bexp",.breward7090[.@qselect];
+					setd "hunt400_"+.@qselect+"jexp",.jreward7090[.@qselect];
+					//dispbottom "hunt400_"+.@qselect+" : "+getd("hunt400_"+.@qselect);
+				} else {
+					if (getd("hunt400_"+.@qselect) == hunt400_1) goto Lstartquest400_1;
+					else if (getd("hunt400_"+.@qselect) == hunt400_2) goto Lstartquest400_2;
+					else if (getd("hunt400_"+.@qselect) == hunt400_3) goto Lstartquest400_3;
+				}
+				switch(.@qselect){
+					case 1: goto Lstartquest400_1;
+					case 2: goto Lstartquest400_2;
+					case 3: goto Lstartquest400_3;
+				}
+		case 2:
+				mes "Mission Location : ";
+				mes "^993300"+.location91110$[$currentrand91110]+"^000000";
+				mes " ";
+				mes "Please select a quest mission from the options below :";
+				//dispbottom ""+getd(".mobid91110_"+.@i+"["+$currentrand91110+"]");
+				for(set .@i,1; .@i <= 3; set .@i,.@i+1){
+					if(getd(".mobid91110_"+.@i+"["+$currentrand91110+"]")){
+						set .@menu$, .@menu$ + "Hunting ^993300"+strmobinfo(1,getd(".mobid91110_"+.@i+"["+$currentrand91110+"]"))+"^000000";
+						set .@menu$, .@menu$ + ":";
+					} else break;
+				}
+				next;
+				set .@qselect,select(.@menu$);
+				mes .@name$;
+				mes "^336633Quest Information^000000 :";
+				mes "Hunting ^993300"+strmobinfo(1,getd(".mobid91110_"+.@qselect+"["+$currentrand91110+"]"))+"^000000";
+				mes " ";
+				mes "^336633Exp per mob^000000 : "+callfunc("int__",.breward91110[.@qselect])+" / "+callfunc("int__",.jreward91110[.@qselect])+" Exp";
+				mes "^336633Reward on completion^000000 :";
+				mes "- "+callfunc("int__",.breward91110[.@qselect]*400)+" / "+callfunc("int__",.jreward91110[.@qselect]*400)+" Exp";
+				mes "- ^AA00FFEden Merit Badge^000000 x"+(/*isvip()?.Reward_MeritBadgeAmount_400_VIP:*/.Reward_MeritBadgeAmount_400);
+				mes "^336633Requirement^000000 :";
+				mes "You must hunt 400 of the required monsters and return.";
+				mes " ";
+				mes "^FF3333Hunting 400 quests will be changed every 3 days^000000";
+				next;
+				if (select("- Accept","- Decline") == 2){
+					mes .@name$;
+					mes "These special quests will change every 3 days, do come back to check on what's new!";
+					close;
+				}
+				if(getd("hunt400_"+.@qselect) <= 0){
+					setd "hunt400_"+.@qselect,getd(".quest91110_"+.@qselect+"["+$currentrand91110+"]");
+					setd "hunt400_"+.@qselect+"bexp",.breward91110[.@qselect];
+					setd "hunt400_"+.@qselect+"jexp",.jreward91110[.@qselect];
+					//dispbottom "hunt400_"+.@qselect+" : "+getd("hunt400_"+.@qselect);
+				} else {
+					if (getd("hunt400_"+.@qselect) == hunt400_1) goto Lstartquest400_1;
+					else if (getd("hunt400_"+.@qselect) == hunt400_2) goto Lstartquest400_2;
+					else if (getd("hunt400_"+.@qselect) == hunt400_3) goto Lstartquest400_3;
+				}
+				switch(.@qselect){
+					case 1: goto Lstartquest400_1;
+					case 2: goto Lstartquest400_2;
+					case 3: goto Lstartquest400_3;
+				}
+		case 3:
+				mes "Mission Location : ";
+				mes "^993300"+.location111130$[$currentrand111130]+"^000000";
+				mes " ";
+				mes "Please select a quest mission from the options below :";
+				//dispbottom ""+getd(".mobid111130_"+.@i+"["+$currentrand111130+"]");
+				for(set .@i,1; .@i <= 3; set .@i,.@i+1){
+					if(getd(".mobid111130_"+.@i+"["+$currentrand111130+"]")){
+						set .@menu$, .@menu$ + "Hunting ^993300"+strmobinfo(1,getd(".mobid111130_"+.@i+"["+$currentrand111130+"]"))+"^000000";
+						set .@menu$, .@menu$ + ":";
+					} else break;
+				}
+				next;
+				set .@qselect,select(.@menu$);
+				mes .@name$;
+				mes "^336633Quest Information^000000 :";
+				mes "Hunting ^993300"+strmobinfo(1,getd(".mobid111130_"+.@qselect+"["+$currentrand111130+"]"))+"^000000";
+				mes " ";
+				mes "^336633Exp per mob^000000 : "+callfunc("int__",.breward111130[.@qselect])+" / "+callfunc("int__",.jreward111130[.@qselect])+" Exp";
+				mes "^336633Reward on completion^000000 :";
+				mes "- "+callfunc("int__",.breward111130[.@qselect]*400)+" / "+callfunc("int__",.jreward111130[.@qselect]*400)+" Exp";
+				mes "- ^AA00FFEden Merit Badge^000000 x"+(/*isvip()?.Reward_MeritBadgeAmount_400_VIP:*/.Reward_MeritBadgeAmount_400);
+				mes "^336633Requirement^000000 :";
+				mes "You must hunt 400 of the required monsters and return.";
+				mes " ";
+				mes "^FF3333Hunting 400 quests will be changed every 3 days^000000";
+				next;
+				if (select("- Accept","- Decline") == 2){
+					mes .@name$;
+					mes "These special quests will change every 3 days, do come back to check on what's new!";
+					close;
+				}
+				if(getd("hunt400_"+.@qselect) <= 0){
+					setd "hunt400_"+.@qselect,getd(".quest111130_"+.@qselect+"["+$currentrand111130+"]");
+					setd "hunt400_"+.@qselect+"bexp",.breward111130[.@qselect];
+					setd "hunt400_"+.@qselect+"jexp",.jreward111130[.@qselect];
+					//dispbottom "hunt400_"+.@qselect+" : "+getd("hunt400_"+.@qselect);
+				} else {
+					if (getd("hunt400_"+.@qselect) == hunt400_1) goto Lstartquest400_1;
+					else if (getd("hunt400_"+.@qselect) == hunt400_2) goto Lstartquest400_2;
+					else if (getd("hunt400_"+.@qselect) == hunt400_3) goto Lstartquest400_3;
+				}
+				switch(.@qselect){
+					case 1: goto Lstartquest400_1;
+					case 2: goto Lstartquest400_2;
+					case 3: goto Lstartquest400_3;
+				}
+		case 4:
+				mes "Mission Location : ";
+				mes "^993300"+.location131150$[$currentrand131150]+"^000000";
+				mes " ";
+				mes "Please select a quest mission from the options below :";
+				//dispbottom ""+getd(".mobid131150_"+.@i+"["+$currentrand131150+"]");
+				for(set .@i,1; .@i <= 3; set .@i,.@i+1){
+					if(getd(".mobid131150_"+.@i+"["+$currentrand131150+"]")){
+						set .@menu$, .@menu$ + "Hunting ^993300"+strmobinfo(1,getd(".mobid131150_"+.@i+"["+$currentrand131150+"]"))+"^000000";
+						set .@menu$, .@menu$ + ":";
+					} else break;
+				}
+				next;
+				set .@qselect,select(.@menu$);
+				mes .@name$;
+				mes "^336633Quest Information^000000 :";
+				mes "Hunting ^993300"+strmobinfo(1,getd(".mobid131150_"+.@qselect+"["+$currentrand131150+"]"))+"^000000";
+				mes " ";
+				mes "^336633Exp per mob^000000 : "+callfunc("int__",.breward131150[.@qselect])+" / "+callfunc("int__",.jreward131150[.@qselect])+" Exp";
+				mes "^336633Reward on completion^000000 :";
+				mes "- "+callfunc("int__",.breward131150[.@qselect]*400)+" / "+callfunc("int__",.jreward131150[.@qselect]*400)+" Exp";
+				mes "- ^AA00FFEden Merit Badge^000000 x"+(/*isvip()?.Reward_MeritBadgeAmount_400_VIP:*/.Reward_MeritBadgeAmount_400);
+				mes "^336633Requirement^000000 :";
+				mes "You must hunt 400 of the required monsters and return.";
+				mes " ";
+				mes "^FF3333Hunting 400 quests will be changed every 3 days^000000";
+				next;
+				if (select("- Accept","- Decline") == 2){
+					mes .@name$;
+					mes "These special quests will change every 3 days, do come back to check on what's new!";
+					close;
+				}
+				if(getd("hunt400_"+.@qselect) <= 0){
+					setd "hunt400_"+.@qselect,getd(".quest131150_"+.@qselect+"["+$currentrand131150+"]");
+					setd "hunt400_"+.@qselect+"bexp",.breward131150[.@qselect];
+					setd "hunt400_"+.@qselect+"jexp",.jreward131150[.@qselect];
+					//dispbottom "hunt400_"+.@qselect+" : "+getd("hunt400_"+.@qselect);
+				} else {
+					if (getd("hunt400_"+.@qselect) == hunt400_1) goto Lstartquest400_1;
+					else if (getd("hunt400_"+.@qselect) == hunt400_2) goto Lstartquest400_2;
+					else if (getd("hunt400_"+.@qselect) == hunt400_3) goto Lstartquest400_3;
+				}
+				switch(.@qselect){
+					case 1: goto Lstartquest400_1;
+					case 2: goto Lstartquest400_2;
+					case 3: goto Lstartquest400_3;
+				}
+
+		default:
+				close;
+
+	}
+		close;
+
+Lstartquest100:
+		set .@CDquestId,60444;
+		set .@hunt_time,questprogress(.@CDquestId,PLAYTIME);
+		if (.@hunt_time == 0) {
+			// Hunting Check
+			if (questprogress(hunt100,HUNTING) == 0) {
+						mes .@name$;
+						mes "Your quest has now begun!";
+						setquest hunt100;
+						close;
+			}
+			else if (questprogress(hunt100,HUNTING) == 1) {
+				mes .@name$;
+				mes "You are already on a quest from this category.";
+				mes "You haven't killed all required monters yet.";
+				next;
+				switch(select("I'm going to finish the mission.","Leave this mission."))
+				{
+					case 1:
+						mes .@name$;
+						mes "No matter how long it takes, you must complete this mission!";
+						close;
+					case 2:
+						mes .@name$;
+						mes "You have quit this mission.";
+						erasequest hunt100;
+						set hunt100,0;
+						set hunt100bexp,0;
+						set hunt100jexp,0;
+						close;
+				}
+			}
+			else if (questprogress(hunt100,HUNTING) == 2) {
+				mes .@name$;
+				mes "Outstanding!";
+				mes "You have successfully completed this mission.";
+				next;
+				set .@bexp,(hunt100bexp * 100)+(hunt100bexp*(.bexpdiv/100));
+				set .@jexp,(hunt100jexp * 100)+(hunt100jexp*(.jexpdiv/100));
+				mes .@name$;
+        // Excluding VIP for the time being
+				/* if(isvip())
+				{
+					mes "You as a premium user, have the option to combine or divide the Experience reward.";
+					next;
+					do
+					{
+						switch(select("- Divide Equally [^000099Base/Job Exp^000000]:- Combine into ^990000Base Exp^000000:- Combine into ^000099Job Exp^000000"))
+						{
+							case 2:
+								set .@newbexp,.@bexp+.@jexp;
+								set .@newjexp,0;
+								break;
+							case 3:
+								set .@newbexp,0;
+								set .@newjexp,.@bexp+.@jexp;
+								break;
+							default:
+								set .@newbexp,.@bexp;
+								set .@newjexp,.@jexp;
+								break;
+						}
+						next;
+						mes .@name$;
+						mes "Are you sure you wish to proceed with the following reward?";
+						mes "^4a66ffBase Exp^000000 : "+.@newbexp;
+						mes "^4a66ffJob Exp^000000 : "+.@newjexp;
+						next;
+						if(select("- Yes, I am content.","- No, let me re-consider.")==1)
+						{
+							set .@bexp,.@newbexp;
+							set .@jexp,.@newjexp;
+							set .@sure,1;
+						}
+						next;
+					} while(!.@sure);
+				} */
+				mes "You will now be rewarded with :";
+				mes " ";
+				mes "^4a66ffBase Exp^000000 : "+callfunc("int__",.@bexp)+" Exp";
+				mes "^4a66ffJob Exp^000000 : "+callfunc("int__",.@jexp)+" Exp";
+				mes " ";
+				if(.bexpdiv || .jexpdiv) {
+					mes "^336633Happy Hour Bonus^000000 :";
+					mes "+"+.bexpdiv+"% Base Exp";
+					mes "+"+.jexpdiv+"% Job Exp";
+				}
+				mes "- ^AA00FFEden Merit Badge^000000 x"+(/*isvip()?.Reward_MeritBadgeAmount_100_VIP:*/.Reward_MeritBadgeAmount_100);
+				next;
+				mes .@name$;
+				mes "Please wait ^FF000024 hours^000000 before doing another mission in this category.";
+				mes " ";
+				mes "Although, for ^FF00001x Reset Stone^000000, I can waive off this cool-down for you.";
+				changequest hunt100,.@CDquestId;
+				getexp .@bexp,.@jexp;
+				getitem 6495,(/*isvip()?.Reward_MeritBadgeAmount_100_VIP:*/.Reward_MeritBadgeAmount_100); // Eden Merit Badge
+				close;
+			}
+		}
+		else if (.@hunt_time == 1) {
+			mes .@name$;
+			mes "You must wait until the Hunting Timer expires to venture out on a mission from this category again.";
+			close;
+		}
+		else if (.@hunt_time == 2) {
+			mes .@name$;
+			mes "Oh you're back!";
+			mes "It looks like the Hunting Timer has expired, I will now erase it's records.";
+			erasequest .@CDquestId;
+			next;
+			mes .@name$;
+			mes "Would you like to repeat the same quest?";
+			mes "If not, you can find another quest.";
+			next;
+			switch(select("- Proceed.","- Find another quest."))
+			{
+				case 1:
+					mes .@name$;
+					mes "Okay then!";
+					mes "The same quest it is.";
+					next;
+					mes .@name$;
+					mes "Your mission has now begun!";
+					setquest hunt100;
+					close;
+				case 2:
+					mes .@name$;
+					mes "Good job on this mission, you're now free to do another one.";
+					set hunt100,0;
+					set hunt100bexp,0;
+					set hunt100jexp,0;
+					close;
+			}
+		}
+		close;
+
+Lstartquest200:
+		set .@CDquestId,60448;
+		set .@hunt_time,questprogress(.@CDquestId,PLAYTIME);
+		if (.@hunt_time == 0) {
+			// Hunting Check
+			if (questprogress(hunt200,HUNTING) == 0) {
+						mes .@name$;
+						mes "Your quest has now begun!";
+						setquest hunt200;
+						close;
+			}
+			else if (questprogress(hunt200,HUNTING) == 1) {
+				mes .@name$;
+				mes "You are already on a quest from this category.";
+				mes "You haven't killed all required monters yet.";
+				next;
+				switch(select("I'm going to finish the mission.","Leave this mission."))
+				{
+					case 1:
+						mes .@name$;
+						mes "No matter how long it takes, you must complete this mission!";
+						close;
+					case 2:
+						mes .@name$;
+						mes "You have quit this mission.";
+						erasequest hunt200;
+						set hunt200,0;
+						set hunt200bexp,0;
+						set hunt200jexp,0;
+						close;
+				}
+			}
+			else if (questprogress(hunt200,HUNTING) == 2) {
+				mes .@name$;
+				mes "Outstanding!";
+				mes "You have successfully completed this mission.";
+				next;
+				set .@bexp,(hunt200bexp * 200)+(hunt200bexp*(.bexpdiv/100));
+				set .@jexp,(hunt200jexp * 200)+(hunt200jexp*(.jexpdiv/100));
+				mes .@name$;
+        /* Exluding VIP For the Time Being
+				if(isvip())
+				{
+					mes "You as a premium user, have the option to combine or divide the Experience reward.";
+					next;
+					do
+					{
+						switch(select("- Divide Equally [^000099Base/Job Exp^000000]:- Combine into ^990000Base Exp^000000:- Combine into ^000099Job Exp^000000"))
+						{
+							case 2:
+								set .@newbexp,.@bexp+.@jexp;
+								set .@newjexp,0;
+								break;
+							case 3:
+								set .@newbexp,0;
+								set .@newjexp,.@bexp+.@jexp;
+								break;
+							default:
+								set .@newbexp,.@bexp;
+								set .@newjexp,.@jexp;
+								break;
+						}
+						next;
+						mes .@name$;
+						mes "Are you sure you wish to proceed with the following reward?";
+						mes "^4a66ffBase Exp^000000 : "+.@newbexp;
+						mes "^4a66ffJob Exp^000000 : "+.@newjexp;
+						next;
+						if(select("- Yes, I am content.","- No, let me re-consider.")==1)
+						{
+							set .@bexp,.@newbexp;
+							set .@jexp,.@newjexp;
+							set .@sure,1;
+						}
+						next;
+					} while(!.@sure);
+				} */
+				mes "You will now be rewarded with :";
+				mes " ";
+				mes "^4a66ffBase Exp^000000 : "+callfunc("int__",.@bexp)+" Exp";;
+				mes "^4a66ffJob Exp^000000 : "+callfunc("int__",.@jexp)+" Exp";;
+				mes " ";
+				if(.bexpdiv || .jexpdiv) {
+					mes "^336633Happy Hour Bonus^000000 :";
+					mes "+"+.bexpdiv+"% Base Exp";
+					mes "+"+.jexpdiv+"% Job Exp";
+				}
+				mes "& ^AA00FFEden Merit Badge^000000 x"+(/*isvip()?.Reward_MeritBadgeAmount_200_VIP:*/.Reward_MeritBadgeAmount_200);
+				next;
+				mes .@name$;
+				mes "Please wait ^FF000024 hours^000000 before doing another mission in this category.";
+				mes " ";
+				mes "Although, for ^FF00001x Reset Stone^000000, I can waive off this cool-down for you.";
+				changequest hunt200,.@CDquestId;
+				getexp .@bexp,.@jexp;
+				getitem 6495,(/*isvip()?.Reward_MeritBadgeAmount_200_VIP:*/.Reward_MeritBadgeAmount_200); // Eden Merit Badge
+				close;
+			}
+		}
+		else if (.@hunt_time == 1) {
+			mes .@name$;
+			mes "You must wait until the Hunting Timer expires to venture out on a mission from this category again.";
+			close;
+		}
+		else if (.@hunt_time == 2) {
+			mes .@name$;
+			mes "Oh you're back!";
+			mes "It looks like the Hunting Timer has expired, I will now erase it's records.";
+			erasequest .@CDquestId;
+			next;
+			mes .@name$;
+			mes "Would you like to repeat the same quest?";
+			mes "If not, you can find another quest.";
+			next;
+			switch(select("- Proceed.","- Find another quest."))
+			{
+				case 1:
+					mes .@name$;
+					mes "Okay then!";
+					mes "The same quest it is.";
+					next;
+					mes .@name$;
+					mes "Your mission has now begun!";
+					setquest hunt200;
+					close;
+				case 2:
+					mes .@name$;
+					mes "Good job on this mission, you're now free to do another one.";
+					set hunt200,0;
+					set hunt200bexp,0;
+					set hunt200jexp,0;
+					close;
+			}
+		}
+		close;
+
+Lstartquest400_1:
+		set .@CDquestId,60449;
+		set .@hunt_time,questprogress(.@CDquestId,PLAYTIME);
+		if (.@hunt_time == 0) {
+			// Hunting Check
+			if (questprogress(hunt400_1,HUNTING) == 0) {
+						mes .@name$;
+						mes "Your quest has now begun!";
+						setquest hunt400_1;
+						close;
+			}
+			else if (questprogress(hunt400_1,HUNTING) == 1) {
+				mes .@name$;
+				mes "You are already on a quest from this category.";
+				mes "You haven't killed all required monters yet.";
+				next;
+				switch(select("I'm going to finish the mission.","Leave this mission."))
+				{
+					case 1:
+						mes .@name$;
+						mes "No matter how long it takes, you must complete this mission!";
+						close;
+					case 2:
+						mes .@name$;
+						mes "You have quit this mission.";
+						erasequest hunt400_1;
+						set hunt400_1,0;
+						set hunt400_1bexp,0;
+						set hunt400_1jexp,0;
+						close;
+				}
+			}
+			else if (questprogress(hunt400_1,HUNTING) == 2) {
+				mes .@name$;
+				mes "Outstanding!";
+				mes "You have successfully completed this mission.";
+				next;
+				set .@bexp,(hunt400_1bexp * 200)+(hunt400_1bexp*(.bexpdiv/100));
+				set .@jexp,(hunt400_1jexp * 200)+(hunt400_1jexp*(.jexpdiv/100));
+				mes .@name$;
+        /* Excluding VIP for the time being
+				if(isvip())
+				{
+					mes "You as a premium user, have the option to combine or divide the Experience reward.";
+					next;
+					do
+					{
+						switch(select("- Divide Equally [^000099Base/Job Exp^000000]:- Combine into ^990000Base Exp^000000:- Combine into ^000099Job Exp^000000"))
+						{
+							case 2:
+								set .@newbexp,.@bexp+.@jexp;
+								set .@newjexp,0;
+								break;
+							case 3:
+								set .@newbexp,0;
+								set .@newjexp,.@bexp+.@jexp;
+								break;
+							default:
+								set .@newbexp,.@bexp;
+								set .@newjexp,.@jexp;
+								break;
+						}
+						next;
+						mes .@name$;
+						mes "Are you sure you wish to proceed with the following reward?";
+						mes "^4a66ffBase Exp^000000 : "+.@newbexp;
+						mes "^4a66ffJob Exp^000000 : "+.@newjexp;
+						next;
+						if(select("- Yes, I am content.","- No, let me re-consider.")==1)
+						{
+							set .@bexp,.@newbexp;
+							set .@jexp,.@newjexp;
+							set .@sure,1;
+						}
+						next;
+					} while(!.@sure);
+				} */
+				mes "You will now be rewarded with :";
+				mes " ";
+				mes "^4a66ffBase Exp^000000 : "+callfunc("int__",.@bexp)+" Exp";;
+				mes "^4a66ffJob Exp^000000 : "+callfunc("int__",.@jexp)+" Exp";;
+				mes " ";
+				if(.bexpdiv || .jexpdiv) {
+					mes "^336633Happy Hour Bonus^000000 :";
+					mes "+"+.bexpdiv+"% Base Exp";
+					mes "+"+.jexpdiv+"% Job Exp";
+				}
+				mes "& ^AA00FFEden Merit Badge^000000 x"+(/*isvip()?.Reward_MeritBadgeAmount_400_VIP:*/.Reward_MeritBadgeAmount_400);
+				next;
+				mes .@name$;
+				mes "Please wait ^FF000024 hours^000000 before doing another mission in this category.";
+				mes " ";
+				mes "Although, for ^FF00001x Reset Stone^000000, I can waive off this cool-down for you.";
+				changequest hunt400_1,.@CDquestId;
+				getexp .@bexp,.@jexp;
+				getitem 6495,(/*isvip()?.Reward_MeritBadgeAmount_400_VIP:*/.Reward_MeritBadgeAmount_400); // Eden Merit Badge
+				close;
+			}
+		}
+		else if (.@hunt_time == 1) {
+			mes .@name$;
+			mes "You must wait until the Hunting Timer expires to venture out on a mission from this category again.";
+			close;
+		}
+		else if (.@hunt_time == 2) {
+			mes .@name$;
+			mes "Oh you're back!";
+			mes "It looks like the Hunting Timer has expired, I will now erase it's records.";
+			erasequest .@CDquestId;
+			set hunt400_1,0;
+			set hunt400_1bexp,0;
+			set hunt400_1jexp,0;
+		}
+		close;
+
+Lstartquest400_2:
+		set .@CDquestId,60450;
+		set .@hunt_time,questprogress(.@CDquestId,PLAYTIME);
+		if (.@hunt_time == 0) {
+			// Hunting Check
+			if (questprogress(hunt400_2,HUNTING) == 0) {
+						mes .@name$;
+						mes "Your quest has now begun!";
+						setquest hunt400_2;
+						close;
+			}
+			else if (questprogress(hunt400_2,HUNTING) == 1) {
+				mes .@name$;
+				mes "You are already on a quest from this category.";
+				mes "You haven't killed all required monters yet.";
+				next;
+				switch(select("I'm going to finish the mission.","Leave this mission."))
+				{
+					case 1:
+						mes .@name$;
+						mes "No matter how long it takes, you must complete this mission!";
+						close;
+					case 2:
+						mes .@name$;
+						mes "You have quit this mission.";
+						erasequest hunt400_2;
+						set hunt400_2,0;
+						set hunt400_2bexp,0;
+						set hunt400_2jexp,0;
+						close;
+				}
+			}
+			else if (questprogress(hunt400_2,HUNTING) == 2) {
+				mes .@name$;
+				mes "Outstanding!";
+				mes "You have successfully completed this mission.";
+				next;
+				set .@bexp,(hunt400_2bexp * 200)+(hunt400_2bexp*(.bexpdiv/100));
+				set .@jexp,(hunt400_2jexp * 200)+(hunt400_2jexp*(.jexpdiv/100));
+				mes .@name$;
+        /* Excluding VIP for the time being
+				if(isvip())
+				{
+					mes "You as a premium user, have the option to combine or divide the Experience reward.";
+					next;
+					do
+					{
+						switch(select("- Divide Equally [^000099Base/Job Exp^000000]:- Combine into ^990000Base Exp^000000:- Combine into ^000099Job Exp^000000"))
+						{
+							case 2:
+								set .@newbexp,.@bexp+.@jexp;
+								set .@newjexp,0;
+								break;
+							case 3:
+								set .@newbexp,0;
+								set .@newjexp,.@bexp+.@jexp;
+								break;
+							default:
+								set .@newbexp,.@bexp;
+								set .@newjexp,.@jexp;
+								break;
+						}
+						next;
+						mes .@name$;
+						mes "Are you sure you wish to proceed with the following reward?";
+						mes "^4a66ffBase Exp^000000 : "+callfunc("int__",.@newbexp);
+						mes "^4a66ffJob Exp^000000 : "+callfunc("int__",.@newjexp);
+						next;
+						if(select("- Yes, I am content.","- No, let me re-consider.")==1)
+						{
+							set .@bexp,.@newbexp;
+							set .@jexp,.@newjexp;
+							set .@sure,1;
+						}
+						next;
+					} while(!.@sure);
+				} */
+				mes "You will now be rewarded with :";
+				mes " ";
+				mes "^4a66ffBase Exp^000000 : "+callfunc("int__",.@bexp)+" Exp";;
+				mes "^4a66ffJob Exp^000000 : "+callfunc("int__",.@jexp)+" Exp";;
+				mes " ";
+				if(.bexpdiv || .jexpdiv) {
+					mes "^336633Happy Hour Bonus^000000 :";
+					mes "+"+.bexpdiv+"% Base Exp";
+					mes "+"+.jexpdiv+"% Job Exp";
+				}
+				mes "& ^AA00FFEden Merit Badge^000000 x"+(/*isvip()?.Reward_MeritBadgeAmount_400_VIP:*/.Reward_MeritBadgeAmount_400);
+				next;
+				mes .@name$;
+				mes "Please wait ^FF000024 hours^000000 before doing another mission in this category.";
+				mes " ";
+				mes "Although, for ^FF00001x Reset Stone^000000, I can waive off this cool-down for you.";
+				changequest hunt400_2,.@CDquestId;
+				getexp .@bexp,.@jexp;
+				getitem 6495,(/*isvip()?.Reward_MeritBadgeAmount_400_VIP:*/.Reward_MeritBadgeAmount_400); // Eden Merit Badge
+				close;
+			}
+		}
+		else if (.@hunt_time == 1) {
+			mes .@name$;
+			mes "You must wait until the Hunting Timer expires to venture out on a mission from this category again.";
+			close;
+		}
+		else if (.@hunt_time == 2) {
+			mes .@name$;
+			mes "Oh you're back!";
+			mes "It looks like the Hunting Timer has expired, I will now erase it's records.";
+			erasequest .@CDquestId;
+			set hunt400_2,0;
+			set hunt400_2bexp,0;
+			set hunt400_2jexp,0;
+		}
+		close;
+
+Lstartquest400_3:
+		set .@CDquestId,60486;
+		set .@hunt_time,questprogress(.@CDquestId,PLAYTIME);
+		if (.@hunt_time == 0) {
+			// Hunting Check
+			if (questprogress(hunt400_3,HUNTING) == 0) {
+						mes .@name$;
+						mes "Your quest has now begun!";
+						setquest hunt400_3;
+						close;
+			}
+			else if (questprogress(hunt400_3,HUNTING) == 1) {
+				mes .@name$;
+				mes "You are already on a quest from this category.";
+				mes "You haven't killed all required monters yet.";
+				next;
+				switch(select("I'm going to finish the mission.","Leave this mission."))
+				{
+					case 1:
+						mes .@name$;
+						mes "No matter how long it takes, you must complete this mission!";
+						close;
+					case 2:
+						mes .@name$;
+						mes "You have quit this mission.";
+						erasequest hunt400_3;
+						set hunt400_3,0;
+						set hunt400_3bexp,0;
+						set hunt400_3jexp,0;
+						close;
+				}
+			}
+			else if (questprogress(hunt400_3,HUNTING) == 2) {
+				mes .@name$;
+				mes "Outstanding!";
+				mes "You have successfully completed this mission.";
+				next;
+				set .@bexp,(hunt400_3bexp * 200)+(hunt400_3bexp*(.bexpdiv/100));
+				set .@jexp,(hunt400_3jexp * 200)+(hunt400_3jexp*(.jexpdiv/100));
+				mes .@name$;
+        /* Excluding VIP for the time being
+				if(isvip())
+				{
+					mes "You as a premium user, have the option to combine or divide the Experience reward.";
+					next;
+					do
+					{
+						switch(select("- Divide Equally [^000099Base/Job Exp^000000]:- Combine into ^990000Base Exp^000000:- Combine into ^000099Job Exp^000000"))
+						{
+							case 2:
+								set .@newbexp,.@bexp+.@jexp;
+								set .@newjexp,0;
+								break;
+							case 3:
+								set .@newbexp,0;
+								set .@newjexp,.@bexp+.@jexp;
+								break;
+							default:
+								set .@newbexp,.@bexp;
+								set .@newjexp,.@jexp;
+								break;
+						}
+						next;
+						mes .@name$;
+						mes "Are you sure you wish to proceed with the following reward?";
+						mes "^4a66ffBase Exp^000000 : "+.@newbexp;
+						mes "^4a66ffJob Exp^000000 : "+.@newjexp;
+						next;
+						if(select("- Yes, I am content.","- No, let me re-consider.")==1)
+						{
+							set .@bexp,.@newbexp;
+							set .@jexp,.@newjexp;
+							set .@sure,1;
+						}
+						next;
+					} while(!.@sure);
+				} */
+				mes "You will now be rewarded with :";
+				mes " ";
+				mes "^4a66ffBase Exp^000000 : "+callfunc("int__",.@bexp)+" Exp";;
+				mes "^4a66ffJob Exp^000000 : "+callfunc("int__",.@jexp)+" Exp";;
+				mes " ";
+				if(.bexpdiv || .jexpdiv) {
+					mes "^336633Happy Hour Bonus^000000 :";
+					mes "+"+.bexpdiv+"% Base Exp";
+					mes "+"+.jexpdiv+"% Job Exp";
+				}
+				mes "& ^AA00FFEden Merit Badge^000000 x"+(/*isvip()?.Reward_MeritBadgeAmount_400_VIP:*/.Reward_MeritBadgeAmount_400);
+				next;
+				mes .@name$;
+				mes "Please wait ^FF000024 hours^000000 before doing another mission in this category.";
+				mes " ";
+				mes "Although, for ^FF00001x Reset Stone^000000, I can waive off this cool-down for you.";
+				changequest hunt400_3,.@CDquestId;
+				getexp .@bexp,.@jexp;
+				getitem 6495,(/*isvip()?.Reward_MeritBadgeAmount_400_VIP:*/.Reward_MeritBadgeAmount_400); // Eden Merit Badge
+				close;
+			}
+		}
+		else if (.@hunt_time == 1) {
+			mes .@name$;
+			mes "You must wait until the Hunting Timer expires to venture out on a mission from this category again.";
+			close;
+		}
+		else if (.@hunt_time == 2) {
+			mes .@name$;
+			mes "Oh you're back!";
+			mes "It looks like the Hunting Timer has expired, I will now erase it's records.";
+			erasequest .@CDquestId;
+			set hunt400_3,0;
+			set hunt400_3bexp,0;
+			set hunt400_3jexp,0;
+		}
+		close;
+
+OnPCLoadMapEvent:
+	if (strcharinfo(3) == "moc_para01"
+		&& BaseLevel >=70 && BaseLevel <=150
+		&& .bexpdiv > 0)
+	showevent 4,1;
+	else if (strcharinfo(3)=="moc_para01"
+		&& BaseLevel >= 70 && BaseLevel <= 150)
+	showevent 2,1;
+	end;
+
+
+/*****************************************************************************
+ *							Main Configuration								 *
+ *****************************************************************************/
+
+OnInit:
+	/* * * * * * * * * * * * * * * *
+	 * Configurable Options
+	 * * * * * * * * * * * * * * * */
+	set .ExtraMobSpawnAmount,50; // Amount of extra mobs that spawn
+	// ----- Eden Merit Badge Rewards
+	// --- Hunting 100
+	set .Reward_MeritBadgeAmount_100,1;
+	set .Reward_MeritBadgeAmount_100_VIP,2;
+	// --- Hunting 200
+	set .Reward_MeritBadgeAmount_200,1;
+	set .Reward_MeritBadgeAmount_200_VIP,2;
+	// --- Hunting 400
+	set .Reward_MeritBadgeAmount_400,1; // Official
+	set .Reward_MeritBadgeAmount_400_VIP,2;
+	// ------ Happy Hour Rates -------
+	set .HH_MinBaseExpRate,5; // Minimum Base Exp Rates
+	set .HH_MinJobExpRate,5; // Minimum Job Exp Rate
+	set .HH_MaxBaseExpRate,15; // Max Base Exp Rate
+	set .HH_MaxJobExpRate,15; // Max Job Exp Rate
+	// DO NOT TOUCH BELOW THIS POINT
+	// STATIC CONFIGURATION
+	// --- 70 ~ 90
+	setarray .location7090$[1],"The Underground Forest"
+						,"Hoomga Forests"
+						,"Shrine of Gonryun's Queen"
+						,"Mine Dungeons"
+						,"Einbroch Fields"
+						,"Grim Reaper's Valley"
+						,"Geffen Dungeons"
+						,"Karu, the West Cave"
+						,"The Abyss Lake"
+						,"Turtle Island Dungeons"
+						,"Glast Heim Underprison";
+	setarray .maps7090$[1],"ama_dun02","um_fild02","gon_dun01","ein_dun02","ein_fild08","lhz_fild02","gef_dun02","beach_dun","hu_fild05","tur_dun02","gl_prison1";
+	setarray .mapx7090[1],32		  ,192		  ,163		  ,291		  ,29		   ,36			,215		,245		,43			,167		,150;
+	setarray .mapy7090[1],44		  ,365		  ,267		  ,292		  ,279		   ,224			,63			,65			,208		,23			,14;
+	setarray .quest7090_1[1],60465    ,60472      ,60452      ,60507      ,60525       ,60537       ,60549      ,60571      ,60579      ,60488      ,60557;
+	setarray .mobid7090_1[1],1402     ,1499       ,1417       ,1622       ,1613        ,1215        ,1143       ,1256       ,1715       ,1316       ,1196;
+	setarray .quest7090_2[1],60466    ,60473      ,60451      ,60508      ,60526       ,60538       ,60550      ,60572      ,60584	    ,60489      ,60558;
+	setarray .mobid7090_2[1],1403     ,1498       ,1410       ,1617       ,1619        ,1162        ,1109       ,1148       ,1718       ,1314       ,1257;
+	setarray .quest7090_3[1],0        ,0          ,0          ,60477      ,0	       ,0	        ,0	        ,0	        ,0		    ,0	        ,0;
+	setarray .mobid7090_3[1],0        ,0          ,0          ,1615       ,0           ,0           ,0          ,0          ,0          ,0          ,0;
+	// --- 91 ~ 110
+	setarray .location91110$[1],"Ice Caves"
+							,"Valley of Gyoll"
+							,"Audhumbla Grasslands"
+							,"Fields near Veins"
+							,"Glast Heim Culvert"
+							,"Roads of Nogg"
+							,"Skellington, a Solitary Village in Nifflheim"
+							,"Turtle Palace"
+							,"Roads of Nogg"
+							,"The Plains of Ida"
+							,"Audhumbla Grasslands"
+							,"Portus Luna"
+							,"Inside Morroc's Pyramids";
+	setarray .maps91110$[1],"ice_dun03","nif_fild02","ra_fild04","ve_fild04","gl_sew01","mag_dun02","nif_fild01","tur_dun04","mag_dun01","ra_fild12","ra_fild05","ra_fild06","moc_pryd06";
+	setarray .mapx91110[1],149		   ,167		    ,202	    ,51		    ,258	   ,47		   ,215		    ,100		,126		,175		,336		,202		,192;
+	setarray .mapy91110[1],22		   ,234		    ,208	    ,250		,255	   ,30		   ,229			,192		,68			,200		,268		,214		,8;
+	setarray .quest91110_1[1],60459    ,60467       ,60570      ,60503      ,60535     ,60553      ,60561       ,60588      ,60590      ,60515      ,60543      ,60545      ,60551;
+	setarray .mobid91110_1[1],1778     ,1504        ,1680       ,1780       ,1253      ,1384       ,1509        ,1318       ,1367       ,1627       ,1133		,1135		,1194;
+	setarray .quest91110_2[1],60460    ,60468       ,60445      ,60504      ,60536     ,60554      ,60562       ,60589      ,60591	    ,60516      ,60544		,60575		,60552;
+	setarray .mobid91110_2[1],1777     ,1505        ,1106       ,1781       ,1194      ,1385       ,1510        ,1315       ,1366       ,1782       ,1134		,1282		,1297;
+	setarray .quest91110_3[1],0        ,0           ,0          ,60565      ,0	       ,0	        ,0	        ,0	        ,0		    ,0	        ,0	        ,0	        ,0;
+	setarray .mobid91110_3[1],0        ,0           ,0          ,1836       ,0         ,0           ,0          ,0          ,0          ,0          ,0	        ,0	        ,0;
+	// --- 111 ~ 130
+	setarray .location111130$[1],"The Cursed Monastery"
+								,"Geffenia"
+								,"The Shrines of Odin"
+								,"The Halls of the Scaraba"
+								,"The Abyss Lake Underground Caves"
+								,"The Robot Factory"
+								,"Outskirts of Kamidal"
+								,"Inside the Castles of Glast Heim"
+								,"The Abyss Lake Underground Caves"
+								,"The Center of Juperos"
+								,"The Center of Juperos"
+								,"The Dungeons of Thor Volcano"
+								,"The Holy Ground of Rachel Sanctuary"
+								,"The Ruins of Juperos"
+								,"The Ruins of Juperos"
+								,"The Thanatos Tower - Upper Level"
+								,"The Holy Ground of Rachel Sanctuary"
+								,"The Fields of Splendide"
+								,"The Fields of Manuk";
+	setarray .maps111130$[1],"abbey01","gefenia02","odin_tem03","dic_dun02","abyss_01","kh_dun02","dic_fild01","gl_cas02","abyss_02","jupe_core","jupe_core","thor_v02","ra_san05","juperos_01","juperos_02","tha_t05","ra_san03","spl_fild01","man_fild01";
+	setarray .mapx111130[1],51		  ,203		  ,266		   ,102		   ,264		  ,41		 ,29		  ,199		 ,275		,150		,150		,75		   ,150		  ,53		   ,37			,62		  ,10		 ,175		  ,200;
+	setarray .mapy111130[1],14		  ,34		  ,280		   ,144		   ,272		  ,198		 ,81		  ,29		 ,270		,285		,285		,205	   ,9		  ,247		   ,63			,11		  ,149		 ,186		  ,210;
+	setarray .quest111130_1[1],60446  ,60453	  ,60461       ,60463      ,60478     ,60490     ,60492       ,60501	 ,60469     ,60509      ,60511      ,60513     ,60517	  ,60527	   ,60529	   	,60539	  ,60555     ,60559	   	  ,60573;
+	setarray .mobid111130_1[1],1865   ,1370	   	  ,1752   	   ,2085       ,1714      ,1736      ,1987        ,1163      ,1713      ,1670       ,1672		,1838	   ,1769	  ,1676	   	   ,1678		,1699	  ,1773      ,2015	      ,1989;
+	setarray .quest111130_2[1],60531  ,60454	  ,60462  	   ,60464      ,60479     ,60491     ,60541       ,60502     ,60470	 	,60510      ,60512		,60514	   ,60518	  ,60528	   ,60530		,60540	  ,60556     ,60560	   	  ,60581;
+	setarray .mobid111130_2[1],1867   ,1374	   	  ,1753   	   ,2086       ,1717      ,1737      ,1986        ,1208      ,1716      ,1671       ,1673	    ,1837	   ,1770	  ,1677	 	   ,1679		,1698	  ,1774      ,1993	      ,1988;
+	setarray .quest111130_3[1],0      ,60576	  ,0		   ,0		   ,0		  ,0		 ,0			  ,0	     ,0		 	,0	        ,60580	    ,0	       ,0	 	  ,0	   	   ,0			,60592	  ,0	     ,60585		  ,0;
+	setarray .mobid111130_3[1],0      ,1390	   	  ,0		   ,0		   ,0		  ,0         ,0		      ,0         ,0         ,0          ,1668	    ,0	       ,0	 	  ,0	   	   ,0			,1295	  ,0	     ,1992	      ,0;
+	// --- 131 ~ 150
+	setarray .location131150$[1],"The Kamidal Tunnel"
+								,"The Somatology Laboratory"
+								,"The Somatology Laboratory"
+								,"The Somatology Laboratory"
+								,"The Fields of Manuk"
+								,"The Dungeons of Thor Volcano"
+								,"The Bridge of Bifrost"
+								,"The Bridge of Bifrost";
+	setarray .maps131150$[1],"dic_dun01","lhz_dun02","lhz_dun02","lhz_dun02","man_fild02","thor_v03","bif_fild02","bif_fild01";
+	setarray .mapx131150[1],367			,150		,150		,150		,206		 ,34		,22			 ,161;
+	setarray .mapy131150[1],44			,18			,18			,18			,219		 ,272		,157		 ,329;
+	setarray .quest131150_1[1],60455	,60480		,60482		,60484		,60493		 ,60546		,60582		 ,60586;
+	setarray .mobid131150_1[1],2083		,1657		,1652		,1656		,2024		 ,1833		,2133		 ,2137;
+	setarray .quest131150_2[1],60456	,60481		,60483		,60485		,60542		 ,60547		,60583		 ,60587;
+	setarray .mobid131150_2[1],2084		,1654		,1655		,1653		,2092		 ,1831		,2132		 ,2136;
+	setarray .quest131150_3[1],0		,0			,0			,0			,0			 ,0			,0			 ,0;
+	setarray .mobid131150_3[1],0		,0			,0			,0			,0			 ,0			,0			 ,0;
+	/*********************
+	 * Automation Settings
+	 *********************/
+	 // -- Using a global variable
+	 //    should the server restart, the quests remain same as it was before the restart
+	if( $currentrand7090  <= 0 || $currentrand7090 > (getarraysize(.maps7090$)-1))
+		set $currentrand7090,rand(1,(getarraysize(.maps7090$)-1));
+	if( $currentrand91110 <= 0 || $currentrand91110 > (getarraysize(.maps91110$)-1))
+		set $currentrand91110,rand(1,(getarraysize(.maps91110$)-1));
+	if( $currentrand111130 <= 0 || $currentrand111130 > (getarraysize(.maps111130$)-1))
+		set $currentrand111130,rand(1,(getarraysize(.maps111130$)-1));
+	if( $currentrand131150 <= 0 || $currentrand131150 > (getarraysize(.mapst131150$)-1))
+		set $currentrand131150,rand(1,(getarraysize(.maps131150$)-1));
+	// -- set rewards based on exp.
+	setarray .breward7090[1],strmobinfo(8,.mobid7090_1[$currentrand7090]),strmobinfo(8,.mobid7090_2[$currentrand7090]),strmobinfo(8,.mobid7090_3[$currentrand7090]);
+	setarray .jreward7090[1],strmobinfo(9,.mobid7090_1[$currentrand7090]),strmobinfo(9,.mobid7090_2[$currentrand7090]),strmobinfo(9,.mobid7090_3[$currentrand7090]);
+	setarray .breward91110[1],strmobinfo(8,.mobid91110_1[$currentrand91110]),strmobinfo(8,.mobid91110_2[$currentrand91110]),strmobinfo(8,.mobid91110_3[$currentrand91110]);
+	setarray .jreward91110[1],strmobinfo(9,.mobid91110_1[$currentrand91110]),strmobinfo(9,.mobid91110_2[$currentrand91110]),strmobinfo(9,.mobid91110_3[$currentrand91110]);
+	setarray .breward111130[1],strmobinfo(8,.mobid111130_1[$currentrand111130]),strmobinfo(8,.mobid111130_2[$currentrand111130]),strmobinfo(8,.mobid111130_3[$currentrand111130]);
+	setarray .jreward111130[1],strmobinfo(9,.mobid111130_1[$currentrand111130]),strmobinfo(9,.mobid111130_2[$currentrand111130]),strmobinfo(9,.mobid111130_3[$currentrand111130]);
+	setarray .breward131150[1],strmobinfo(8,.mobid131150_1[$currentrand131150]),strmobinfo(8,.mobid131150_2[$currentrand131150]),strmobinfo(8,.mobid131150_3[$currentrand131150]);
+	setarray .jreward131150[1],strmobinfo(9,.mobid131150_1[$currentrand131150]),strmobinfo(9,.mobid131150_2[$currentrand131150]),strmobinfo(9,.mobid131150_3[$currentrand131150]);
+	// -- EXP Rate Modifier
+	set .bexpdiv,0; // Increase or reduce rate modifier
+	set .jexpdiv,0;
+	// -- Mob Spawn Rate Modifier
+	for(set .@i,1; .@i <= 3; set .@i,.@i+1){
+		if(getd(".mobid7090_"+.@i+"["+$currentrand7090+"]"))
+	    	monster ""+.maps7090$[$currentrand7090],0,0,""+strmobinfo(1,getd(".mobid7090_"+.@i+"["+$currentrand7090+"]")),getd(".mobid7090_"+.@i+"["+$currentrand7090+"]"),.ExtraMobSpawnAmount,strnpcinfo(0)+"::OnRespawnMob7090_"+.@i;
+		if(getd(".mobid91110_"+.@i+"["+$currentrand91110+"]"))
+	    	monster ""+.maps91110$[$currentrand91110],0,0,""+strmobinfo(1,getd(".mobid91110_"+.@i+"["+$currentrand91110+"]")),getd(".mobid91110_"+.@i+"["+$currentrand91110+"]"),.ExtraMobSpawnAmount,strnpcinfo(0)+"::OnRespawnMob91110_"+.@i;
+		if(getd(".mobid111130_"+.@i+"["+$currentrand111130+"]"))
+	    	monster ""+.maps111130$[$currentrand111130],0,0,""+strmobinfo(1,getd(".mobid111130_"+.@i+"["+$currentrand111130+"]")),getd(".mobid111130_"+.@i+"["+$currentrand111130+"]"),.ExtraMobSpawnAmount,strnpcinfo(0)+"::OnRespawnMob111130_"+.@i;
+		if(getd(".mobid131150_"+.@i+"["+$currentrand131150+"]"))
+	    	monster ""+.maps131150$[$currentrand131150],0,0,""+strmobinfo(1,getd(".mobid131150_"+.@i+"["+$currentrand131150+"]")),getd(".mobid131150_"+.@i+"["+$currentrand131150+"]"),.ExtraMobSpawnAmount,strnpcinfo(0)+"::OnRespawnMob131150_"+.@i;
+	}
+	end;
+
+OnRespawnMob7090_1:
+	set .@mobs,mobcount(.maps7090$[$currentrand7090],"Gramps::OnRespawnMob7090_1");
+	monster ""+.maps7090$[$currentrand7090],0,0,""+strmobinfo(1,.mobid7090_1[$currentrand7090]),.mobid7090_1[$currentrand7090],(.ExtraMobSpawnAmount-.@mobs),strnpcinfo(0)+"::OnRespawnMob7090_1";
+	end;
+
+OnRespawnMob7090_2:
+	set .@mobs,mobcount(.maps7090$[$currentrand7090],"Gramps::OnRespawnMob7090_2");
+	monster ""+.maps7090$[$currentrand7090],0,0,""+strmobinfo(1,.mobid7090_2[$currentrand7090]),.mobid7090_2[$currentrand7090],(.ExtraMobSpawnAmount-.@mobs),strnpcinfo(0)+"::OnRespawnMob7090_2";
+	end;
+
+OnRespawnMob7090_3:
+	set .@mobs,mobcount(.maps7090$[$currentrand7090],"Gramps::OnRespawnMob7090_3");
+	monster ""+.maps7090$[$currentrand7090],0,0,""+strmobinfo(1,.mobid7090_3[$currentrand7090]),.mobid7090_3[$currentrand7090],(.ExtraMobSpawnAmount-.@mobs),strnpcinfo(0)+"::OnRespawnMob7090_3";
+	end;
+
+OnRespawnMob91110_1:
+	set .@mobs,mobcount(.maps91110$[$currentrand91110],"Gramps::OnRespawnMob91110_1");
+	monster ""+.maps91110$[$currentrand91110],0,0,""+strmobinfo(1,.mobid91110_1[$currentrand91110]),.mobid91110_1[$currentrand91110],(.ExtraMobSpawnAmount-.@mobs),strnpcinfo(0)+"::OnRespawnMob91110_1";
+	end;
+
+OnRespawnMob91110_2:
+	set .@mobs,mobcount(.maps91110$[$currentrand91110],"Gramps::OnRespawnMob91110_2");
+	monster ""+.maps91110$[$currentrand91110],0,0,""+strmobinfo(1,.mobid91110_2[$currentrand91110]),.mobid91110_2[$currentrand91110],(.ExtraMobSpawnAmount-.@mobs),strnpcinfo(0)+"::OnRespawnMob91110_2";
+	end;
+
+OnRespawnMob91110_3:
+	set .@mobs,mobcount(.maps91110$[$currentrand91110],"Gramps::OnRespawnMob91110_3");
+	monster ""+.maps91110$[$currentrand91110],0,0,""+strmobinfo(1,.mobid91110_3[$currentrand91110]),.mobid91110_3[$currentrand91110],(.ExtraMobSpawnAmount-.@mobs),strnpcinfo(0)+"::OnRespawnMob91110_3";
+	end;
+
+OnRespawnMob111130_1:
+	set .@mobs,mobcount(.maps111130$[$currentrand111130],"Gramps::OnRespawnMob111130_1");
+	monster ""+.maps111130$[$currentrand111130],0,0,""+strmobinfo(1,.mobid111130_1[$currentrand111130]),.mobid111130_1[$currentrand111130],(.ExtraMobSpawnAmount-.@mobs),strnpcinfo(0)+"::OnRespawnMob111130_1";
+	end;
+
+OnRespawnMob111130_2:
+	set .@mobs,mobcount(.maps111130$[$currentrand111130],"Gramps::OnRespawnMob111130_2");
+	monster ""+.maps111130$[$currentrand111130],0,0,""+strmobinfo(1,.mobid111130_2[$currentrand111130]),.mobid111130_2[$currentrand111130],(.ExtraMobSpawnAmount-.@mobs),strnpcinfo(0)+"::OnRespawnMob111130_2";
+	end;
+
+OnRespawnMob111130_3:
+	set .@mobs,mobcount(.maps111130$[$currentrand111130],"Gramps::OnRespawnMob111130_3");
+	monster ""+.maps111130$[$currentrand111130],0,0,""+strmobinfo(1,.mobid111130_3[$currentrand111130]),.mobid111130_3[$currentrand111130],(.ExtraMobSpawnAmount-.@mobs),strnpcinfo(0)+"::OnRespawnMob111130_3";
+	end;
+
+OnRespawnMob131150_1:
+	set .@mobs,mobcount(.maps131150$[$currentrand131150],"Gramps::OnRespawnMob131150_1");
+	monster ""+.maps131150$[$currentrand131150],0,0,""+strmobinfo(1,.mobid131150_1[$currentrand131150]),.mobid131150_1[$currentrand131150],(.ExtraMobSpawnAmount-.@mobs),strnpcinfo(0)+"::OnRespawnMob131150_1";
+	end;
+
+OnRespawnMob131150_2:
+	set .@mobs,mobcount(.maps131150$[$currentrand131150],"Gramps::OnRespawnMob131150_2");
+	monster ""+.maps131150$[$currentrand131150],0,0,""+strmobinfo(1,.mobid131150_2[$currentrand131150]),.mobid131150_2[$currentrand131150],(.ExtraMobSpawnAmount-.@mobs),strnpcinfo(0)+"::OnRespawnMob131150_2";
+	end;
+
+OnRespawnMob131150_3:
+	set .@mobs,mobcount(.maps131150$[$currentrand131150],"Gramps::OnRespawnMob131150_3");
+	monster ""+.maps131150$[$currentrand131150],0,0,""+strmobinfo(1,.mobid131150_3[$currentrand131150]),.mobid131150_3[$currentrand131150],(.ExtraMobSpawnAmount-.@mobs),strnpcinfo(0)+"::OnRespawnMob131150_3";
+	end;
+
+// ---- RESET ON THESE DAYS/TIMES
+OnSun0000:
+OnThu0000:
+	announce "Gramps : A new set of Hunting 400 Quests have been put up for the strong!",0;
+	set $currentrand7090,0;
+	set $currentrand91110,0;
+	set $currentrand111130,0;
+	set $currentrand131150,0;
+	deletearray .breward7090,getarraysize(.breward7090);
+	deletearray .jreward7090,getarraysize(.jreward7090);
+	deletearray .breward91110,getarraysize(.breward91110);
+	deletearray .jreward91110,getarraysize(.jreward91110);
+	deletearray .breward111130,getarraysize(.breward111130);
+	deletearray .jreward111130,getarraysize(.jreward111130);
+	deletearray .breward131150,getarraysize(.breward131150);
+	deletearray .jreward131150,getarraysize(.jreward131150);
+	goto OnInit;
+	end;
+
+OnWhisperGlobal:
+	if(getgmlevel() < 99) end;
+	else if ( compare ( @whispervar0$, "reset" ) ) goto OnSun0000;
+	else if ( compare ( @whispervar0$, "starthh" ) ) goto OnHour00;
+	else if ( compare ( @whispervar0$, "endhh" ) ) goto OnHour01;
+	else if ( compare ( @whispervar0$, "init" ) ) goto OnInit;
+	end;
+
+// ---- Happy Hour EXP Rates
+OnHour00:
+OnHour04:
+OnHour08:
+OnHour12:
+OnHour16:
+OnHour20:
+	set .bexpdiv,rand(.HH_MinBaseExpRate,.HH_MaxBaseExpRate);
+	set .jexpdiv,rand(.HH_MinJobExpRate,.HH_MaxJobExpRate);
+	announce "Gramps : Happy Hour has begun! Get an extra "+.bexpdiv+"% BEXP & "+.jexpdiv+"% JEXP from the quests you turn-in during the hour!",0;
+	end;
+
+// ---- Happy Hour EXP Rates
+OnHour01:
+OnHour05:
+OnHour09:
+OnHour13:
+OnHour17:
+OnHour21:
+	set .bexpdiv,0;
+	set .jexpdiv,0;
+	end;
+}

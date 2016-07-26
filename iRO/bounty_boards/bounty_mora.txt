@@ -1,0 +1,47 @@
+/* * * * * * * * * * * 
+ * iRO Bounty Missions
+ * - http://irowiki.org/wiki/Bounty_Board_Quests
+ * 
+ * ------- V 1.0 ------
+ * Official iRO renewal repeatable Bounty Missions
+ * --------------------
+ * Credits: Smokexyz [sagunxp@gmail.com]
+ * * * * * * * * * * */
+
+mora,98,110,4	script	Bounty Board 141-175#bif	2_BULLETIN_BOARD,{
+	setarray .@questId[0],62821 // Miming
+						,62822  // Little Fatum
+						,62823  // Cenere
+						,62824  // Menblatt
+						,62825  // Petal
+						,62826  // Angra Mantis
+						,62827  // Antique Book
+						,62828  // Litchern (Yellow)
+						,62829  // Litchern (Blue)
+						,62830  // Litchern (Red)
+						,62831; // Litchern (Green)
+	setarray .@mobId[0],2137 // Miming
+						,2136 // Little Fatum
+						,2367 // Cenere
+						,2363 // Menblatt
+						,2364 // Petal
+						,2133 // Angra Mantis
+						,2366 // Antique Book
+						,2368 // Litchern (Yellow)
+						,2367 // Litchern (Blue)
+						,2369 // Litchern (Red)
+						,2370; // Litchern (Green)
+	callfunc "F_BountyBoard",.@questId,.@mobId,.min_lvl,.max_lvl;
+	end;
+
+OnPCLoadMapEvent:
+	if (strcharinfo(3) == strnpcinfo(4)
+		&& (BaseLevel >= .min_lvl && BaseLevel <= .max_lvl))
+	showevent 1,1;
+	end;
+
+OnInit:
+	set .min_lvl,141;
+	set .max_lvl,175;
+	end;
+}

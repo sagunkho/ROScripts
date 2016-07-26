@@ -1,0 +1,248 @@
+//--- Gramps Quests
+
+// -- 100 Hunting Quests
+// -- -- 50 to 60
+60406,0,1189,100,0,0,0,0,"Orc Archer Hunt"
+60408,0,1213,100,0,0,0,0,"High Orc Hunt"
+60615,0,1376,100,0,0,0,0,"Harpy Hunting" // 60615
+// -- -- 60 to 70
+60427,0,1385,100,0,0,0,0,"Ground Deleter Hunting" //60427
+60429,0,1379,100,0,0,0,0,"Nightmare Terror Hunting"
+60617,0,1148,100,0,0,0,0,"Medusa Hunting"
+// -- -- 70 to 80
+60414,0,1773,100,0,0,0,0,"Hodremlin Hunting"
+60412,0,1771,100,0,0,0,0,"Vanberk Hunting"
+60410,0,1772,100,0,0,0,0,"Isilla Hunting"
+60416,0,1769,100,0,0,0,0,"Agav Hunting"
+// -- -- 80 to 99
+60431,0,1657,100,0,0,0,0,"Laurell Weinder Hunting"
+60433,0,1654,100,0,0,0,0,"Armeyer Dinze Hunting"
+60435,0,1652,100,0,0,0,0,"Egnigem Cenia Hunting"
+60437,0,1655,100,0,0,0,0,"Errende Ebecee Hunting"
+60439,0,1656,100,0,0,0,0,"Kavach Icarus Hunting"
+60441,0,1653,100,0,0,0,0,"Wickebine Tres Hunting"
+60619,0,1833,100,0,0,0,0,"Kasa Hunting"
+
+// -- 200 Hunting Quests
+// -- -- 50 to 60
+60407,0,1189,200,0,0,0,0,"Orc Archer Hunt"
+60409,0,1213,200,0,0,0,0,"High Orc Hunt"
+60616,0,1376,200,0,0,0,0,"Harpy Hunting"
+// -- -- 60 to 70
+60428,0,1385,200,0,0,0,0,"Ground Deleter Hunting"
+60430,0,1379,200,0,0,0,0,"Nightmare Terror Hunting"
+60618,0,1148,200,0,0,0,0,"Medusa Hunting"
+// -- -- 70 to 80
+60415,0,1773,200,0,0,0,0,"Hodremlin Hunting"
+60413,0,1771,200,0,0,0,0,"Vanberk Hunting"
+60411,0,1772,200,0,0,0,0,"Isilla Hunting"
+60417,0,1769,200,0,0,0,0,"Agav Hunting"
+
+60418,604800,0,0,0,0,0,0,"West Orc Village Access" // 60418
+// -- -- 80 to 99
+60432,0,1657,200,0,0,0,0,"Laurell Weinder Hunting"
+60434,0,1654,200,0,0,0,0,"Armeyer Dinze Hunting"
+60436,0,1652,200,0,0,0,0,"Egnigem Cenia Hunting"
+60438,0,1655,200,0,0,0,0,"Errende Ebecee Hunting"
+60440,0,1656,200,0,0,0,0,"Kavach Icarus Hunting" // 60440
+60442,0,1653,200,0,0,0,0,"Wickebine Tres Hunting"
+60620,0,1833,200,0,0,0,0,"Kasa Hunting" // 60620
+
+//--- Cooking Quests
+60566,0,1777,200,0,0,0,0,"Warg Blood Cocktail Ingredients"
+60567,0,1155,200,0,0,0,0,"Petite Tail Noodle Ingredients"
+60563,0,1781,200,0,0,0,0,"Drocera Herb Stew Ingredients"
+60564,0,1778,200,0,0,0,0,"Siroma Icetea Ingredients"
+60568,0,1166,200,0,0,0,0,"Savage BBQ Ingredients"
+60569,0,1149,200,0,0,0,0,"Minor Brisket Ingredients"
+
+
+//--- 400 hunting gramps 108 quests in total.
+
+//60471,0,1507,400,1860,4,0,0,"Yoyo and Choco Ape Hunt"
+// level 50 to 60
+// ama_dun02 - 87 88
+60465,0,1402,400,0,0,0,0,"Poison Toad Hunting"
+60466,0,1403,400,0,0,0,0,"Firelock Soldier Hunting"
+// um_fild02 - 67 67
+60472,0,1499,400,0,0,0,0,"Wootan Fighter Ape Hunt"
+60473,0,1498,400,0,0,0,0,"Wootan Shooter Ape hunt"
+// gon_dun01 - 90 92
+60452,0,1417,400,0,0,0,0,"Zipper Bear Hunting"
+60451,0,1410,400,0,0,0,0,"Enchanted Peach Tree Hunting"
+// ein_dun02 - 91 92 97
+60507,0,1622,400,0,0,0,0,"Teddy Bear Hunting"
+60508,0,1617,400,0,0,0,0,"Waste Stove Hunting"
+60477,0,1615,400,0,0,0,0,"Obsidian Hunt"
+// ein_fild08 - 81 85
+60525,0,1613,400,0,0,0,0,"Metaling Hunting"
+60526,0,1619,400,0,0,0,0,"Porcellio Hunting"
+// lhz_fild02 - 84 86
+60537,0,1215,400,0,0,0,0,"Stem Worm Hunting"
+60538,0,1162,400,0,0,0,0,"Rafflesia Hunting"
+// gef_dun02 - 90 93
+60549,0,1143,400,0,0,0,0,"Marionette Hunting"
+60550,0,1109,400,0,0,0,0,"Deviruchi Hunting" // 60550
+// beach_dun - 89 102
+60571,0,1256,400,0,0,0,0,"Pest Hunting"
+60572,0,1148,400,0,0,0,0,"Medusa Hunting"
+//hu_fild05 - 90 84
+60579,0,1715,400,0,0,0,0,"Red Novus Hunting"
+60584,0,1718,400,0,0,0,0,"Yellow Novus Hunting"
+// tur_dun02 - 92 90
+60488,0,1316,400,0,0,0,0,"Solider Hunt"
+60489,0,1314,400,0,0,0,0,"Permeter Hunt"
+// gl_prison01 - 91 95
+60557,0,1196,400,0,0,0,0,"Skel Prisoner Hunting"
+60558,0,1257,400,0,0,0,0,"Injustice Hunting"
+
+// -- -- 91 to 110
+//ice_dun03 - 106 110
+60459,0,1778,400,0,0,0,0,"Gazeti Hunting" // 60459
+60460,0,1777,400,0,0,0,0,"Ice Titan Hunting"
+//nif_fild02 - 108 109
+60467,0,1504,400,0,0,0,0,"Dullahan Hunting"
+60468,0,1505,400,0,0,0,0,"Loli Ruri hunting"
+// ra_fild04 - 101 103
+60570,0,1680,400,0,0,0,0,"Hill Wind Hunting" // 60570
+60445,0,1106,400,0,0,0,0,"Desert Wolf Hunting"
+// ve_fild04 - 105 101 110
+60503,0,1780,400,0,0,0,0,"Muscipular Hunting"
+60504,0,1781,400,0,0,0,0,"Drosera Hunting"
+60565,0,1836,400,0,0,0,0,"Magmaring Hunting"
+// gl_sew01 - 100 107
+60535,0,1253,400,0,0,0,0,"Gargoyle Hunting"
+60536,0,1194,400,0,0,0,0,"Arclouse Hunting"
+// mag_dun02 - 105 105
+60553,0,1384,400,0,0,0,0,"Flying Deleter Hunting"
+60554,0,1385,400,0,0,0,0,"Ground Deleter Hunting"
+// nif_fild10 - 101 102
+60561,0,1509,400,0,0,0,0,"Lude Hunting"
+60562,0,1510,400,0,0,0,0,"Heirozoist Hunting"
+// tur_dun04 - 98 100
+60588,0,1318,400,0,0,0,0,"Heater Hunting"
+60589,0,1315,400,0,0,0,0,"Assaulter Hunting"
+// mag_dun01 - 101 103
+60590,0,1367,400,0,0,0,0,"Blazzer Hunting" // 60590
+60591,0,1366,400,0,0,0,0,"Lava Golem Hunting"
+// ra_fild12 - 95 95
+60515,0,1627,400,0,0,0,0,"Anopheles Hunting"
+60516,0,1782,400,0,0,0,0,"Roween Hunting"
+// ra_fild05 - 107 102
+60543,0,1133,400,0,0,0,0,"Axe Kobold Hunting"
+60544,0,1134,400,0,0,0,0,"Hammer Kobold Hunting"
+// ra_fild06 - 101 108
+60545,0,1135,400,0,0,0,0,"Mace Kobold Hunting"
+60575,0,1282,400,0,0,0,0,"Kobold Archer Hunting"
+// moc_pryd06 - 107 114
+60551,0,1194,400,0,0,0,0,"Arclouse Hunting"
+60552,0,1297,400,0,0,0,0,"Ancient Mummy Hunting"
+
+// -- -- 111 to 130
+// abbey01 - 123 130
+60446,0,1865,400,0,0,0,0,"Ragged Zombie Hunting"
+60531,0,1867,400,0,0,0,0,"Banshee Hunting"
+// geffenia02 - 119 120 118
+60453,0,1370,400,0,0,0,0,"Succubus Hunting"
+60454,0,1374,400,0,0,0,0,"Incubus Hunting"
+60576,0,1390,400,0,0,0,0,"Violy Hunting"
+// odin_tem03 - 126 128
+60461,0,1752,400,0,0,0,0,"Skogul Hunting"
+60462,0,1753,400,0,0,0,0,"Frus Hunting"
+// dic_dun02 - 136 139
+60463,0,2085,400,0,0,0,0,"Antler Scaraba Hunting"
+60464,0,2086,400,0,0,0,0,"Rake Scaraba Hunting"
+// abyss_01 - 126 126
+60478,0,1714,400,0,0,0,0,"Red Ferus Hunt"
+60479,0,1717,400,0,0,0,0,"Green Ferus Hunt"
+//kh_dun02 - 112 112
+60490,0,1736,400,0,0,0,0,"Aliot Hunt" // 60490
+60491,0,1737,400,0,0,0,0,"Aliza hunt"
+// dic_fild01 - 125 128
+60492,0,1987,400,0,0,0,0,"Centipede Hunt"
+60541,0,1986,400,0,0,0,0,"Tatacho Hunting"
+// gl_cas02 - 115 120
+60501,0,1163,400,0,0,0,0,"Raydric Hunting"
+60502,0,1208,400,0,0,0,0,"Wanderer Hunting"
+// abyss_02 - 130 130
+60469,0,1713,400,0,0,0,0,"Gold Acidus Hunting"
+60470,0,1716,400,0,0,0,0,"Blue Acidus Hunting"
+// jupe_core - 116 116
+60509,0,1670,400,0,0,0,0,"Green Dimik Hunting"
+60510,0,1671,400,0,0,0,0,"Blue Dimik Hunting" // 60510
+// jupe_core - 116 116
+60511,0,1672,400,0,0,0,0,"Orange Dimik Hunting"
+60512,0,1673,400,0,0,0,0,"Red Dimik Hunting"
+60580,0,1668,400,0,0,0,0,"Archdam Hunting" // 60580
+// thor_v02 - 126 129
+60513,0,1838,400,0,0,0,0,"Knocker Hunting"
+60514,0,1837,400,0,0,0,0,"Imp Hunting"
+// ra_san05 - 128 126
+60517,0,1769,400,0,0,0,0,"Agav Hunting"
+60518,0,1770,400,0,0,0,0,"Echio Hunting"
+// juperos_01 - 113 113
+60527,0,1676,400,0,0,0,0,"Purple Venatu Hunting"
+60528,0,1677,400,0,0,0,0,"Green Venatu Hunting"
+// juperos_02 - 113 113
+60529,0,1678,400,0,0,0,0,"Orange Venatu Hunting"
+60530,0,1679,400,0,0,0,0,"Blue Venatu Hunting" // 60530
+// tha_t05 - 112 114 120
+60539,0,1699,400,0,0,0,0,"Ancient Mimic Hunting"
+60540,0,1698,400,0,0,0,0,"Death Word Hunting" // 60540
+60592,0,1295,400,0,0,0,0,"Owl Baron Hunting" // 60592
+// ra_san03 - 122 124
+60555,0,1773,400,0,0,0,0,"Hodremlin Hunting"
+60556,0,1774,400,0,0,0,0,"Seeker Hunting"
+// spl_fild01 - 113 117 120
+60559,0,2015,400,0,0,0,0,"Dark Pinguicula Hunting"
+60560,0,1993,400,0,0,0,0,"Naga Hunting" // 60560
+60585,0,1992,400,0,0,0,0,"Cornus Hunting"
+//man_fild01 - 123 114
+60573,0,1989,400,0,0,0,0,"Hillslion Hunting"
+60581,0,1988,400,0,0,0,0,"Nepenthes Hunting"
+
+
+// -- -- 131 to 150
+// dic_dun01 - 130 134
+60455,0,2083,400,0,0,0,0,"Uni-Horn Scaraba Hunting"
+60456,0,2084,400,0,0,0,0,"Horn Scaraba Hunting"
+//lhz_dun02 - 133 134
+60480,0,1657,400,0,0,0,0,"Laurell Weinder Hunt" // 60580
+60481,0,1654,400,0,0,0,0,"Armeyer Dinze Hunt"
+//lhz_dun02 - 136 133
+60482,0,1652,400,0,0,0,0,"Egnigem Cenia Hunt"
+60483,0,1655,400,0,0,0,0,"Errende Ebecee Hunt"
+//lhz_dun02 - 135 132
+60484,0,1656,400,0,0,0,0,"Kavach Icarus Hunt"
+60485,0,1653,400,0,0,0,0,"Wickebine Tres Hunt"
+//man_fild02 - 133 132
+60493,0,2024,400,0,0,0,0,"Bradium Golem Hunt"
+60542,0,2092,400,0,0,0,0,"Dolomedes Hunting"
+//thor_v03 - 135 138
+60546,0,1833,400,0,0,0,0,"Kasa Hunting"
+60547,0,1831,400,0,0,0,0,"Salamander Hunting"
+// bif_fild02 - 144 145
+//60582,0,2133,400,0,0,0,0,"Angra Mantis Hunting"
+//60583,0,2132,400,0,0,0,0,"Pom Spider Hunting"
+// bif_fild01 - 140 142
+//60586,0,2137,400,0,0,0,0,"Miming Hunting"
+//60587,0,2136,400,0,0,0,0,"Little Fatum Hunting"
+// ----------- Gramps Hunting Timer
+///////////////////////////////////////////////////////////////////////////////////////////////////
+60444,82800,0,0,0,0,0,0,"Hunting Timer 1"
+60448,43200,0,0,0,0,0,0,"Hunting Timer 2"
+60449,82800,0,0,0,0,0,0,"Hunting Timer 3"
+60450,82800,0,0,0,0,0,0,"Hunting Timer 4" // 60450
+60457,0,0,0,0,0,0,0,"Join the Eden Group!"
+60474,0,0,0,0,0,0,0,"Ape Hunter Timer" // 60474
+60486,82800,0,0,0,0,0,0,"Hunting Timer 5"
+60487,0,0,0,0,0,0,0,"Hunting Timer 6"
+60494,0,0,0,0,0,0,0,"Hunting Timer 1"
+60495,0,0,0,0,0,0,0,"Hunting Timer 2" // 60495
+60500,0,0,0,0,0,0,0,"Battlegrounds" // 60500
+60533,0,0,0,0,0,0,0,"Hunting Timer 3"
+60534,0,0,0,0,0,0,0,"Hunting Timer 4"
+60548,0,0,0,0,0,0,0,"Upgrade Event timer"
+60574,10800,0,0,0,0,0,0,"Reset Stone Hunting Timer"
+60577,0,0,0,0,0,0,0,"Hunting Timer"
+60578,0,0,0,0,0,0,0,"Hunting Timer"

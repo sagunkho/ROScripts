@@ -1,0 +1,239 @@
+/* * * * * * * * * * * * *
+ * iRO Overlook Water Dungeon
+ * - http://irowiki.org/wiki/Overlook_Water_Dungeon_Quests
+ * 
+ * ------- V1.0 ----------
+ * Credits: Smokexyz [sagunxp@gmail.com]
+ * * * * * * * * * * * * */
+
+gef_fild07,264,286,4	script	Overlook Water Dungeon	2_BULLETIN_BOARD,{
+	// Configuration
+	set .@questTimerId,50536;
+	mes "^FF0000WARNING:^000000";
+	mes "Access to this dungeon is available to players level 30-75 only.";
+	mes "VIP access is unlimited within the level requirement.";
+	next;
+	mes "All others must use ^0099002 "+getitemname(6320)+"^000000 to gain access for ^9900003 days^000000.";
+	mes "After the 3 days expire, you must use another "+getitemname(6320)+" to re-gain access to the dungeon.";
+	next;
+	mes "There seems to be a door near these ruins under water.";
+	mes "Would you like to swim down and enter the ruins?";
+	next;
+	if(!ispremium()) {
+		if(questprogress(.@questTimerId,PLAYTIME) == 2) {
+			mes "Your limited access to this dungeon has expired.";
+			erasequest .@questTimerId;
+			close;
+		}
+		else if(questprogress(.@questTimerId,PLAYTIME) == 0) // if quest not set
+		{
+			mes "You do not have access to this dungeon.";
+			mes "Please submit ^0099002 "+getitemname(6320)+"^000000 to gain access for ^9900003 days^000000.";
+			next;
+			if(select("- Submit Requirements","- Cancel") == 1) {
+				if(countitem(6320) < 2) {
+					mes "You do not have the required ^0099002 "+getitemname(6320)+"^000000 in your inventory.";
+					close;
+				}
+				else {
+					delitem 6320,2; // consume 2 reset stones for access.
+					setquest .@questTimerId;
+					mes "^990000You have been granted access for 3 days into this dungeon.^000000";
+					close;
+				}
+			}
+			close; 
+		}
+	}
+	if(select("Yes, I want to enter.","Do not enter.")==1)
+	{
+		mes "You walk towards the edge of the water.";
+		mes "There is a Kapha staring up at you.";
+		next;
+		mes "If you have completed one of the hunt quests, you can go directly to that floor.";
+		mes "What floor would you like to go to?";
+		next;
+		switch(select("Floor 1","Floor 2","Floor 3","Floor 4","Floor 5","Do not enter")){
+			case 1:
+				warp "iz_dun00t",168,168;
+				break;
+			case 2:
+				warp "iz_dun01t",253,252;
+				break;
+			case 3:
+				warp "iz_dun02t",236,204;
+				break;
+			case 4:
+				warp "iz_dun03t",32,63;
+				break;
+			case 5:
+				warp "iz_dun04t",26,27;
+				break;
+			case 6:
+				break;
+		}
+	}
+	close;
+}
+
+gef_fild07,259,289,4	script	Kapha	MD_KAPHA,{
+	end;
+}
+
+// ---------------- Final Reward for Overlook Water Dungeons ----------------
+function	script	OverLook_Final	{
+	if(questprogress(50531) == 2 &&
+		questprogress(50532) == 2 &&
+		questprogress(50533) == 2 &&
+		questprogress(50534) == 2 &&
+		questprogress(50535) == 2 &&
+		!OverlookComplete
+		) {
+		mes "As a final reward for completion of this dungeon, you are able to select from one of the following cards.";
+		next;
+		setarray .@cardId[0],4027 // Kukre Card
+							,4049 // Vadon  "
+							,4024 // Plankton
+							,4035 // Hydra
+							,4055 // Marina
+							,4061 // Cornutus
+							,4095 // Marse
+							,4093 // Obeaune
+							,4199 // Merman
+							,4105 // Marc
+							,4077 // Phen
+							,4089 // Swordfish
+							,4084 // Marine Sphere
+							,4111 // Strouf
+							,4125; // Deviace
+		set .@menu$,"";
+		for(.@i=0; .@i<getarraysize(.@cardId); .@i++)
+		{
+			set .@menu$,.@menu$+getitemname(.@cardId[.@i]);
+			if(.@i < getarraysize(.@cardId)-1) set .@menu$,.@menu$+":";
+		}
+		set .@cardnum,select(.@menu$);
+		mes "Are you sure you want the ^990000"+getitemname(.@cardId[.@cardnum-1])+"^000000 card?";
+		next;
+		if(select("- Proceed","- Cancel") == 2) close;
+		getitem .@cardId[.@cardnum-1],1;
+		mes "Your rewards have been sanctioned.";
+		mes "Good luck and God speed on your journeys ahead.";
+		set OverlookComplete,1; // So that this doesn't run again.
+		close;
+	}
+	return;
+}
+
+// ---------------- Warps -------------------
+
+iz_dun00t,168,173,0	warp	izdt01-1	3,3,gef_fild07,267,288
+iz_dun00t,352,342,0	warp	izdt02	5,2,iz_dun01t,253,252
+iz_dun00t,39,41,0	warp	izdt03	5,2,iz_dun01t,41,37
+iz_dun01t,118,170,0	warp	izdt04	5,2,iz_dun02t,236,204
+iz_dun01t,253,258,0	warp	izdt02-1	2,2,iz_dun00t,352,337
+iz_dun01t,41,32,0	warp	izdt03-1	2,2,iz_dun00t,39,46
+iz_dun02t,236,198,0	warp	izdt04-1	5,3,iz_dun01t,118,165
+iz_dun02t,339,331,0	warp	izdt05	2,2,iz_dun03t,32,63
+iz_dun03t,264,245,0	warp	izdt06	1,2,iz_dun04t,26,27
+iz_dun03t,29,63,0	warp	izdt05-1	2,2,iz_dun02t,339,328
+iz_dun04t,26,24,0	warp	izdt06-1	2,2,iz_dun03t,261,245
+
+// ---------------- Monster Spawns -------------------
+
+//==================================================
+// iz_dun00t - Overlook Water Dungeon
+//==================================================
+iz_dun00t,0,0,0,0	monster	Aged Plankton	5001,65,5000,0,0
+iz_dun00t,0,0,0,0	monster	Aged Marina	5002,45,5000,0,0
+iz_dun00t,0,0,0,0	monster	Aged Vadon	5003,15,5000,0,0
+iz_dun00t,0,0,0,0	monster	Aged Kukre	5004,15,5000,0,0
+iz_dun00t,0,0,0,0	monster	Aged Hydra	5014,15,5000,0,0
+iz_dun00t,0,0,0,0	monster	Black Mushroom	1084,5,180000,90000,1
+
+//==================================================
+// iz_dun01t - Overlook Water Dungeon
+//==================================================
+iz_dun01t,0,0,0,0	monster	Aged Vadon	5003,60,5000,0,0
+iz_dun01t,0,0,0,0	monster	Aged Kukre	5004,50,5000,0,0
+iz_dun01t,0,0,0,0	monster	Aged Hydra	5014,30,5000,0,0
+iz_dun01t,0,0,0,0	monster	Aged Marina	5002,15,5000,0,0
+iz_dun01t,0,0,0,0	monster	Aged Cornutus	5012,15,5000,0,0
+iz_dun01t,0,0,0,0	monster	Aged Plankton	5001,10,5000,0,0
+iz_dun01t,0,0,0,0	monster	Black Mushroom	1084,10,180000,90000,1
+
+//==================================================
+// iz_dun02t - Overlook Water Dungeon
+//==================================================
+iz_dun02t,0,0,0,0	monster	Aged Cornutus	5012,60,5000,0,0
+iz_dun02t,0,0,0,0	monster	Aged Marse	5006,40,5000,0,0
+iz_dun02t,0,0,0,0	monster	Aged Obeaune	5005,40,5000,0,0
+iz_dun02t,0,0,0,0	monster	Aged Hydra	5014,40,5000,0,0
+iz_dun02t,0,0,0,0	monster	Aged Merman	5010,1,5000,0,0
+iz_dun02t,0,0,0,0	monster	Black Mushroom	1084,15,180000,90000,1
+
+//==================================================
+// iz_dun03t - Overlook Water Dungeon
+//==================================================
+iz_dun03t,0,0,0,0	monster	Aged Phen	5008,45,5000,0,0
+iz_dun03t,0,0,0,0	monster	Aged Marc	5007,40,5000,0,0
+iz_dun03t,0,0,0,0	monster	Aged Swordfish	5015,40,5000,0,0
+iz_dun03t,0,0,0,0	monster	Aged Marine Sphere	5011,20,5000,0,0
+iz_dun03t,0,0,0,0	monster	Aged Merman	5010,3,5000,0,0
+iz_dun03t,200,144,0,0	monster	Aged Hydra	5014,1,282000,150000,0
+iz_dun03t,178,253,0,0	monster	Aged Hydra	5014,1,300000,150000,0
+iz_dun03t,193,143,0,0	monster	Aged Hydra	5014,1,300000,150000,0
+iz_dun03t,196,143,0,0	monster	Aged Hydra	5014,1,300000,150000,0
+iz_dun03t,199,143,0,0	monster	Aged Hydra	5014,1,300000,150000,0
+iz_dun03t,202,143,0,0	monster	Aged Hydra	5014,1,300000,150000,0
+iz_dun03t,205,143,0,0	monster	Aged Hydra	5014,1,300000,150000,0
+iz_dun03t,208,143,0,0	monster	Aged Hydra	5014,1,300000,150000,0
+iz_dun03t,211,143,0,0	monster	Aged Hydra	5014,1,300000,150000,0
+iz_dun03t,108,249,0,0	monster	Aged Hydra	5014,1,300000,150000,0
+iz_dun03t,180,251,0,0	monster	Aged Hydra	5014,1,300000,150000,0
+iz_dun03t,176,260,0,0	monster	Aged Hydra	5014,1,300000,150000,0
+iz_dun03t,80,163,0,0	monster	Aged Hydra	5014,1,300000,150000,0
+iz_dun03t,204,57,0,0	monster	Aged Hydra	5014,1,302000,150000,0
+iz_dun03t,204,60,0,0	monster	Aged Hydra	5014,1,304000,150000,0
+iz_dun03t,203,47,0,0	monster	Aged Hydra	5014,1,305000,150000,0
+iz_dun03t,206,144,0,0	monster	Aged Hydra	5014,1,305000,150000,0
+iz_dun03t,209,144,0,0	monster	Aged Hydra	5014,1,308000,150000,0
+iz_dun03t,204,51,0,0	monster	Aged Hydra	5014,1,309000,150000,0
+iz_dun03t,203,144,0,0	monster	Aged Hydra	5014,1,310000,150000,0
+iz_dun03t,204,54,0,0	monster	Aged Hydra	5014,1,310000,150000,0
+iz_dun03t,203,59,0,0	monster	Aged Hydra	5014,1,312000,150000,0
+iz_dun03t,204,48,0,0	monster	Aged Hydra	5014,1,313000,150000,0
+iz_dun03t,194,144,0,0	monster	Aged Hydra	5014,1,316000,150000,0
+iz_dun03t,203,53,0,0	monster	Aged Hydra	5014,1,317000,150000,0
+iz_dun03t,191,144,0,0	monster	Aged Hydra	5014,1,321000,150000,0
+iz_dun03t,212,144,0,0	monster	Aged Hydra	5014,1,321000,150000,0
+iz_dun03t,203,50,0,0	monster	Aged Hydra	5014,1,323000,150000,0
+iz_dun03t,203,56,0,0	monster	Aged Hydra	5014,1,323000,150000,0
+iz_dun03t,197,144,0,0	monster	Aged Hydra	5014,1,2960000,150000,0
+
+//==================================================
+// iz_dun04t - Overlook Water Dungeon
+//==================================================
+iz_dun04t,0,0,0,0	monster	Aged Merman	5010,52,5000,0,0
+iz_dun04t,0,0,0,0	monster	Aged Strouf	5009,50,5000,0,0
+iz_dun04t,0,0,0,0	monster	Aged Marine Sphere	5011,10,5000,0,0
+iz_dun04t,0,0,0,0	monster	Aged Swordfish	5015,10,5000,0,0
+iz_dun04t,0,0,0,0	monster	Aged Deviace	5013,3,5000,0,0
+iz_dun04t,80,246,0,0	monster	Aged Hydra	5014,1,294000,150000,0
+iz_dun04t,79,246,0,0	monster	Aged Hydra	5014,1,300000,150000,0
+iz_dun04t,111,41,0,0	monster	Aged Hydra	5014,1,300000,150000,0
+iz_dun04t,111,35,0,0	monster	Aged Hydra	5014,1,300000,150000,0
+iz_dun04t,124,233,0,0	monster	Aged Hydra	5014,1,300000,150000,0
+iz_dun04t,38,115,0,0	monster	Aged Hydra	5014,1,300000,150000,0
+iz_dun04t,38,129,0,0	monster	Aged Hydra	5014,1,300000,150000,0
+iz_dun04t,61,135,0,0	monster	Aged Hydra	5014,1,300000,150000,0
+iz_dun04t,79,234,0,0	monster	Aged Hydra	5014,1,302000,150000,0
+iz_dun04t,111,38,0,0	monster	Aged Hydra	5014,1,303000,150000,0
+iz_dun04t,134,233,0,0	monster	Aged Hydra	5014,1,305000,150000,0
+iz_dun04t,58,135,0,0	monster	Aged Hydra	5014,1,305000,150000,0
+iz_dun04t,42,116,0,0	monster	Aged Hydra	5014,1,306000,150000,0
+iz_dun04t,33,129,0,0	monster	Aged Hydra	5014,1,308000,150000,0
+iz_dun04t,42,129,0,0	monster	Aged Hydra	5014,1,312000,150000,0
+iz_dun04t,80,233,0,0	monster	Aged Hydra	5014,1,318000,150000,0
+iz_dun04t,69,243,0,0	monster	Aged Hydra	5014,1,321000,150000,0
+iz_dun04t,33,115,0,0	monster	Aged Hydra	5014,1,321000,150000,0

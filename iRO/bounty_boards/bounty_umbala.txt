@@ -1,0 +1,33 @@
+/* * * * * * * * * * * 
+ * iRO Bounty Missions
+ * - http://irowiki.org/wiki/Bounty_Board_Quests
+ * 
+ * ------- V 1.0 ------
+ * Official iRO renewal repeatable Bounty Missions
+ * --------------------
+ * Credits: Smokexyz [sagunxp@gmail.com]
+ * * * * * * * * * * */
+
+umbala,124,85,4	script	Bounty Board 40-100#umb	2_BULLETIN_BOARD,{
+	setarray .@questId[0],62609 // Wild Rose
+						,62610 // Dryad
+						,62611 // Wootan Fighter
+						,62612; // Parasite
+	setarray .@mobId[0],1261 //Wild Rose
+						,1493 // Dryad
+						,1499 // Wootan Fighter
+						,1500; // Parasite
+	callfunc "F_BountyBoard",.@questId,.@mobId,.min_lvl,.max_lvl;
+	end;
+
+OnPCLoadMapEvent:
+	if (strcharinfo(3) == strnpcinfo(4)
+		&& (BaseLevel >= .min_lvl && BaseLevel <= .max_lvl))
+	showevent 1,1;
+	end;
+
+OnInit:
+	set .min_lvl,40;
+	set .max_lvl,100;
+	end;
+}

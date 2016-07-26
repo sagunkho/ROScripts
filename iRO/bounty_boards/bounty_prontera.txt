@@ -1,0 +1,128 @@
+/* * * * * * * * * * * 
+ * iRO Bounty Missions
+ * - http://irowiki.org/wiki/Bounty_Board_Quests
+ * 
+ * ------- V 1.0 ------
+ * Official iRO renewal repeatable Bounty Missions
+ * --------------------
+ * Credits: Smokexyz [sagunxp@gmail.com]
+ * * * * * * * * * * */
+ 
+ 
+prontera,136,225,4	script	Bounty Board 1-20#prt	2_BULLETIN_BOARD,{
+	setarray .@questId[0],62816 // Lunatic
+						,62722 // Hornet
+						,62723 // Roda Frog
+						,62724 // Rocker
+						,62725 // Savage Babe
+						,62726 // Thief Bug Egg
+						,62817; // Ambernite
+	setarray .@mobId[0],1063 // Lunatic
+						,1004 // Hornet
+						,1012 // Roda Frog
+						,1052 // Rocker
+						,1167 // Savage Babe
+						,1048 // Thief Bug Egg
+						,1094; // Ambernite
+	callfunc "F_BountyBoard",.@questId,.@mobId,.min_lvl,.max_lvl;
+	end;
+
+OnPCLoadMapEvent:
+	if (strcharinfo(3) == strnpcinfo(4)
+		&& (BaseLevel >= .min_lvl && BaseLevel <= .max_lvl))
+	showevent 1,1;
+	end;
+
+OnInit:
+	set .min_lvl,1;
+	set .max_lvl,20;
+	end;
+}
+ 
+prontera,138,227,4	script	Bounty Board 21-50#prt	2_BULLETIN_BOARD,{
+	setarray .@questId[0],62727 // Thief Bug
+						,62728 // Tarou
+						,62729 // Stainer
+						,62730 // Peco Peco
+						,62731 // Coco
+						,62732 // Yoyo
+						,62733 // Thief Bug Female
+						,62734 // Thief Bug Male
+						,62735 // Poporing
+						,62736 // Elder Willow
+						,62818; // Muka
+	setarray .@mobId[0],1051 // Thief Bug
+						,1175 // Tarou
+						,1174 // Stainer
+						,1019 // Peco Peco
+						,1104 // Coco
+						,1057 // Yoyo
+						,1053 // Thief Bug Female
+						,1054 // Thief Bug Male
+						,1031 //Poporing
+						,1033 // Elder Willow
+						,1055; // Muka
+	callfunc "F_BountyBoard",.@questId,.@mobId,.min_lvl,.max_lvl;
+	end;
+
+OnPCLoadMapEvent:
+	if (strcharinfo(3) == strnpcinfo(4)
+		&& (BaseLevel >= .min_lvl && BaseLevel <= .max_lvl))
+	showevent 1,1;
+	end;
+
+OnInit:
+	set .min_lvl,21;
+	set .max_lvl,50;
+	end;
+}
+
+prontera,140,229,4	script	Bounty Board 41-70#prt	2_BULLETIN_BOARD,{
+	setarray .@questId[0],62819 // Magnolia
+						,62737 // Argos
+						,62738 // Beetle King
+						,62739; // Savage
+	setarray .@mobId[0],1138 // Magnolia
+						,1100 // Argos
+						,1494 // Beetle King
+						,1166; // Savage
+	callfunc "F_BountyBoard",.@questId,.@mobId,.min_lvl,.max_lvl;
+	end;
+
+OnPCLoadMapEvent:
+	if (strcharinfo(3) == strnpcinfo(4)
+		&& (BaseLevel >= .min_lvl && BaseLevel <= .max_lvl))
+	showevent 1,1;
+	end;
+
+OnInit:
+	set .min_lvl,41;
+	set .max_lvl,70;
+	end;
+}
+
+prontera,142,231,4	script	Bounty Board 61-100#prt	2_BULLETIN_BOARD,{
+	setarray .@questId[0],62740 // Diller
+						,62741 // Hunter Fly
+						,62742 // Mantis
+						,62743 // Side Winder
+						,62744; // Argiope
+	setarray .@mobId[0],1380 // Driller
+						,1035 // Hunter Fly
+						,1139 // Mantis
+						,1037 // Side Winder
+						,1099; // Argiope
+	callfunc "F_BountyBoard",.@questId,.@mobId,.min_lvl,.max_lvl;
+	end;
+
+OnPCLoadMapEvent:
+	if (strcharinfo(3) == strnpcinfo(4)
+		&& (BaseLevel >= .min_lvl && BaseLevel <= .max_lvl))
+	showevent 1,1;
+	end;
+
+OnInit:
+	set .min_lvl,61;
+	set .max_lvl,100;
+	end;
+}

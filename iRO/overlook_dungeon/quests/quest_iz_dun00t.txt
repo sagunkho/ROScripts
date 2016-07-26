@@ -1,0 +1,85 @@
+/* * * * * * * * * * * * *
+ * iRO Overlook Water Dungeon
+ * - http://irowiki.org/wiki/Overlook_Water_Dungeon_Quests
+ *
+ * 50531#Overlook Water Dungeon#SG_FEEL#QUE_NOIMAGE#
+ * The Overlook Water Dungeon is teeming with Aged monsters. Hunt them all down and claim your reward at the Overlook Water Dungeon signpost#
+ * Hunt 20 Aged Plankton and 20 Aged Marina#
+ * 
+ * ------- V1.0 ----------
+ * Credits: Smokexyz [sagunxp@gmail.com]
+ * * * * * * * * * * * * */
+
+iz_dun00t,174,169,4	script	Overlook Dungeon Hunt	2_BULLETIN_BOARD,{
+	set .@mob_count,20;
+	set .@mobId1,5001;
+	set .@mobId2,5002;
+	set .@questId,50531;
+	set .@bexp,60660;
+	set .@jexp,68040;
+	setarray .@itemId[0],2102,2104;
+	
+	callfunc("OverLook_Final"); // Final Reward Function
+	if (questprogress(.@questId) == 2) {
+		mes "You have already completed this mission.";
+		mes "Upon venturing into other levels of this dungeon you may find more missions.";
+		close;
+	}
+	mes "Mission Objectives -";
+	mes "Hunt "+.@mob_count+" "+strmobinfo(2,.@mobId1)+" and "+strmobinfo(2,.@mobId2)+".";
+	next;
+	if(select("- Accept/Submit Mission","- Cancel") == 2) close;
+	else if (questprogress(.@questId,HUNTING) == 0) {
+		mes "You have accepted this mission.";
+		mes "Good luck on your journey towards it's completion.";
+		setquest .@questId;
+		close;
+	}
+	else if (questprogress(.@questId,HUNTING) == 1) {
+		mes "You are already on this quest and have not completed it yet.";
+		next;
+		switch(select("I'm going to finish the mission.","Leave this mission."))
+		{
+			case 1:
+				close;
+			case 2:
+				mes "Are you sure you wish to quit this mission?";
+				mes "All current progress will be lost upon doing so.";
+				next;
+				if(select("- Proceed","- Cancel") == 2) close;
+				mes "You have quit this mission.";
+				erasequest .@questId;
+				close;
+		}
+	}
+	else if (questprogress(.@questId,HUNTING) == 2) {
+		mes "You have successfully completed this mission.";
+		next;
+		mes "You will now be rewarded with :";
+		mes " ";
+		mes "^4a66ffBase Exp^000000 : "+callfunc("int__",.@bexp)+" Exp";
+		mes "^4a66ffJob Exp^000000 : "+callfunc("int__",.@jexp)+" Exp";
+		mes " ";
+		mes "And an option to choose from either one of these items -";
+		mes getitemname(.@itemId[0])+" or "+getitemname(.@itemId[1]);
+		next;
+		mes "Please select your item reward.";
+		mes "^FF0000Please choose carefully, items are non-refundable.^000000.";
+		next;
+		switch(select(getitemname(.@itemId[0]),getitemname(.@itemId[1]))){
+			case 1:
+				set .@rewardId,.@itemId[0];
+				break;
+			case 2:
+				set .@rewardId,.@itemId[1];
+				break;
+			default:
+				close;
+		}
+		mes "Your mission rewards have been sanctioned.";
+		completequest .@questId;
+		getexp .@bexp,.@jexp;
+		getitem .@rewardId,1;
+	}
+	close;
+}

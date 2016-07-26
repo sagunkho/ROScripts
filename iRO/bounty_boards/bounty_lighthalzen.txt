@@ -1,0 +1,132 @@
+/* * * * * * * * * * * 
+ * iRO Bounty Missions
+ * - http://irowiki.org/wiki/Bounty_Board_Quests
+ * 
+ * ------- V 1.0 ------
+ * Official iRO renewal repeatable Bounty Missions
+ * --------------------
+ * Credits: Smokexyz [sagunxp@gmail.com]
+ * * * * * * * * * * */
+
+lighthalzen,194,161,4	script	Bounty Board 81-100#lhz	2_BULLETIN_BOARD,{
+	setarray .@questId[0],62745 // Metaling
+						,62746 // Rafflesia
+						,62747 // Stem Worm
+						,62748 // Breeze
+						,62749; // Anopheles
+	setarray .@mobId[0],1613 // Metaling
+						,1162 // Rafflesia
+						,1215 // Stem Worm
+						,1692 // Breeze
+						,1627; // Anopheles
+	callfunc "F_BountyBoard",.@questId,.@mobId,.min_lvl,.max_lvl;
+	end;
+
+OnPCLoadMapEvent:
+	if (strcharinfo(3) == strnpcinfo(4)
+		&& (BaseLevel >= .min_lvl && BaseLevel <= .max_lvl))
+	showevent 1,1;
+	end;
+
+OnInit:
+	set .min_lvl,81;
+	set .max_lvl,100;
+	end;
+}
+
+lighthalzen,192,161,4	script	Bounty Board 101-150#lhz	2_BULLETIN_BOARD,{
+	setarray .@questId[0],62750 // Kobold (Axe)
+						,62751 // Kobold (Hammer)
+						,62752 // Kobold (Mace)
+						,62753; // Kobold Archer
+	setarray .@mobId[0],1133 // Kobold (Axe)
+						,1134 // Kobold (Hammer)
+						,1135 // Kobold (Mace)
+						,1182; // Kobold Archer
+	callfunc "F_BountyBoard",.@questId,.@mobId,.min_lvl,.max_lvl;
+	end;
+
+OnPCLoadMapEvent:
+	if (strcharinfo(3) == strnpcinfo(4)
+		&& (BaseLevel >= .min_lvl && BaseLevel <= .max_lvl))
+	showevent 1,1;
+	end;
+
+OnInit:
+	set .min_lvl,101;
+	set .max_lvl,150;
+	end;
+}
+
+lighthalzen,190,161,4	script	Bounty Board 121-175#lhz	2_BULLETIN_BOARD,{
+	setarray .@questId[0],62754 // Remover
+						,62755 // Laurell Weinder
+						,62756 // Errende Ebecee
+						,62757 // Armeyer Dinze
+						,62758 // Wickibine Tres
+						,62759 // Kavach Icarus
+						,62760; // Egnigem Cenia
+						
+	setarray .@mobId[0],1682 // Remover
+						,1657 // Laurell Weinder
+						,1655 // Errende Ebecee
+						,1654 // Armeyer Dinze
+						,1653 // Wickebine Tres
+						,1656 // Kavach Icarus
+						,1652; // Egnigem Cenia
+	callfunc "F_BountyBoard",.@questId,.@mobId,.min_lvl,.max_lvl;
+	end;
+
+OnPCLoadMapEvent:
+	if (strcharinfo(3) == strnpcinfo(4)
+		&& (BaseLevel >= .min_lvl && BaseLevel <= .max_lvl))
+	showevent 1,1;
+	end;
+
+OnInit:
+	set .min_lvl,121;
+	set .max_lvl,175;
+	end;
+}
+
+lighthalzen,188,161,4	script	Bounty Board 141-175#lhz	2_BULLETIN_BOARD,{
+	setarray .@questId[0],62761 // Kathryne Keyron
+						,62762  // Margaretha Sorin
+						,62763  // Cecil Damon
+						,62764  // Eremes Guile
+						,62765  // Seyren Windsor
+						,62766  // Howard Alt-Eisen
+						,62767  // Trentini
+						,62768  // Celia Alde
+						,62769  // Alphoccio
+						,62770  // Gertie
+						,62771  // Chen Lio
+						,62772  // Flamel Emure
+						,62773; // Randel Lawrence
+	setarray .@mobId[0],1639  // Kathryne Keyron
+						,1637 // Margaretha Sorin
+						,1638 // Cecil Damon
+						,1635 // Eremes Guile
+						,1634 // Seyren Windsor
+						,1636 // Howard Alt-Eisen
+						,2227 // Trentini
+						,2223 // Celia Alde
+						,2226 // Alphoccio
+						,2225 // Gertie
+						,2224 // Chen Lio
+						,2222 // Flamel Emure
+						,2221; // Randel Lawrence
+	callfunc "F_BountyBoard",.@questId,.@mobId,.min_lvl,.max_lvl;
+	end;
+
+OnPCLoadMapEvent:
+	if (strcharinfo(3) == strnpcinfo(4)
+		&& (BaseLevel >= .min_lvl && BaseLevel <= .max_lvl))
+	showevent 1,1;
+	end;
+
+OnInit:
+	set .min_lvl,141;
+	set .max_lvl,175;
+	end;
+}

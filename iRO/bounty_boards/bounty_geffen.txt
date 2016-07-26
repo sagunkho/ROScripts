@@ -1,0 +1,186 @@
+/* * * * * * * * * * * 
+ * iRO Bounty Missions
+ * - http://irowiki.org/wiki/Bounty_Board_Quests
+ * 
+ * ------- V 1.0 ------
+ * Official iRO renewal repeatable Bounty Missions
+ * --------------------
+ * Credits: Smokexyz [sagunxp@gmail.com]
+ * * * * * * * * * * */
+ 
+  
+geffen,77,74,4	script	Bounty Board 1-20#gef	2_BULLETIN_BOARD,{
+	setarray .@questId[0],62660 // Chonchon
+						,62661 // Roda Frog
+						,62662 // Mandragora
+						,62663; // Ambernite
+	setarray .@mobId[0],1011 // Chonchon
+						,1012 // Roda Frog
+						,1020 // Mandragora
+						,1094; // Ambernite
+	callfunc "F_BountyBoard",.@questId,.@mobId,.min_lvl,.max_lvl;
+	end;
+
+OnPCLoadMapEvent:
+	if (strcharinfo(3) == strnpcinfo(4)
+		&& (BaseLevel >= .min_lvl && BaseLevel <= .max_lvl))
+	showevent 1,1;
+	end;
+
+OnInit:
+	set .min_lvl,1;
+	set .max_lvl,20;
+	end;
+}
+
+geffen,76,75,4	script	Bounty Board 21-50#gef	2_BULLETIN_BOARD,{
+	setarray .@questId[0],62664 // Creamy
+						,62665 // Caramel
+						,62810 // Coco
+						,62666 // Horn
+						,62667 // Poison Spore
+						,62811 // Smokie
+						,62812 // Martin
+						,62813; // Elder Willow
+	setarray .@mobId[0],1018 // Creamy
+						,1103 // Caramel
+						,1104 // Coco
+						,1128 // Horn
+						,1077 // Poison Spore
+						,1056 // Smokie
+						,1145 // Martin
+						,1033; //  Elder Willow
+	callfunc "F_BountyBoard",.@questId,.@mobId,.min_lvl,.max_lvl;
+	end;
+
+OnPCLoadMapEvent:
+	if (strcharinfo(3) == strnpcinfo(4)
+		&& (BaseLevel >= .min_lvl && BaseLevel <= .max_lvl))
+	showevent 1,1;
+	end;
+
+OnInit:
+	set .min_lvl,21;
+	set .max_lvl,50;
+	end;
+}
+
+geffen,75,76,4	script	Bounty Board 41-75#gef	2_BULLETIN_BOARD,{
+	setarray .@questId[0],62820 // Skel Worker
+						,62668 // Orc Warrior
+						,62669 // Orc Lady
+						,62670 // Goblin (Dagger)
+						,62671; // Goblin Archer
+	setarray .@mobId[0],1169 // Skel Worker
+						,1023 // Orc Warrior
+						,1273 // Orc Lady
+						,1122 // Goblin (Dagger)
+						,1258; // Goblin Archer
+	callfunc "F_BountyBoard",.@questId,.@mobId,.min_lvl,.max_lvl;
+	end;
+
+OnPCLoadMapEvent:
+	if (strcharinfo(3) == strnpcinfo(4)
+		&& (BaseLevel >= .min_lvl && BaseLevel <= .max_lvl))
+	showevent 1,1;
+	end;
+
+OnInit:
+	set .min_lvl,41;
+	set .max_lvl,75;
+	end;
+}
+
+geffen,74,77,4	script	Bounty Board 61-100#gef	2_BULLETIN_BOARD,{
+	setarray .@questId[0],62672 // Ghoul
+						,62673 // Jakk
+						,62674; // Nightmare
+	setarray .@mobId[0],1036 // Ghoul
+						,1130 // Jakk
+						,1061; // Nightmare
+	callfunc "F_BountyBoard",.@questId,.@mobId,.min_lvl,.max_lvl;
+	end;
+
+OnPCLoadMapEvent:
+	if (strcharinfo(3) == strnpcinfo(4)
+		&& (BaseLevel >= .min_lvl && BaseLevel <= .max_lvl))
+	showevent 1,1;
+	end;
+
+OnInit:
+	set .min_lvl,61;
+	set .max_lvl,100;
+	end;
+}
+
+geffen,74,78,4	script	Bounty Board 81-120#gef	2_BULLETIN_BOARD,{
+	setarray .@questId[0],62675 // Deviruchi
+						,62676 // Marionette
+						,62677 // Wraith
+						,62678 // Dark Priest
+						,62679 // Gargoyle
+						,62680 // Flying Petite
+						,62681 // Ground Petite
+						,62682 // Evil Druid
+						,62683; // Wind Ghost
+	setarray .@mobId[0],1109 //Deviruchi
+						,1143 // Marionette
+						,1192 // Wraith
+						,1198 // Dark Priest
+						,1253 // Gargoyle
+						,1156 // Flying Petite
+						,1155 // Ground   "
+						,1117 // Evil Druid
+						,1263; // Wind Ghost
+	callfunc "F_BountyBoard",.@questId,.@mobId,.min_lvl,.max_lvl;
+	end;
+
+OnPCLoadMapEvent:
+	if (strcharinfo(3) == strnpcinfo(4)
+		&& (BaseLevel >= .min_lvl && BaseLevel <= .max_lvl))
+	showevent 1,1;
+	end;
+
+OnInit:
+	set .min_lvl,81;
+	set .max_lvl,120;
+	end;
+}
+
+geffen,73,79,4	script	Bounty Board 101-150#gef	2_BULLETIN_BOARD,{
+	setarray .@questId[0],62684 // Carat
+						,62815 // Majoruros
+						,62685 // Wanderer
+						,62686 // Sting
+						,62687 // Arclouze
+						,62688 // Raydric
+						,62689 // Khalitzburg
+						,62690 // Anolian
+						,62691 // False Angel 
+						,62692 // Violy
+						,62693; // Mini Demon
+	setarray .@mobId[0],1267 // Carat
+						,1310 // Majoruros
+						,1208 // Wanderer
+						,1207 // Sting
+						,1194 // Arclouze
+						,1163 // Raydric
+						,1132 // Khalitzburg
+						,1206 // Anolian
+						,1371 // False Angel
+						,1390 // Violy
+						,1292; // Mini Demon
+	callfunc "F_BountyBoard",.@questId,.@mobId,.min_lvl,.max_lvl;
+	end;
+
+OnPCLoadMapEvent:
+	if (strcharinfo(3) == strnpcinfo(4)
+		&& (BaseLevel >= .min_lvl && BaseLevel <= .max_lvl))
+	showevent 1,1;
+	end;
+
+OnInit:
+	set .min_lvl,101;
+	set .max_lvl,150;
+	end;
+}

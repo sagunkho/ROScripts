@@ -1,0 +1,77 @@
+/* * * * * * * * * * * 
+ * iRO Bounty Missions
+ * - http://irowiki.org/wiki/Bounty_Board_Quests
+ * 
+ * ------- V 1.0 ------
+ * Official iRO renewal repeatable Bounty Missions
+ * --------------------
+ * Credits: Smokexyz [sagunxp@gmail.com]
+ * * * * * * * * * * */
+
+hugel,67,153,4	script	Bounty Board 81-100#hug	2_BULLETIN_BOARD,{
+	setarray .@questId[0],62789 // Red Novus
+						,62790; // Yellow Novus
+	setarray .@mobId[0],1715 // Red Novus
+						,1718; // Yellow Novus
+	callfunc "F_BountyBoard",.@questId,.@mobId,.min_lvl,.max_lvl;
+	end;
+
+OnPCLoadMapEvent:
+	if (strcharinfo(3) == strnpcinfo(4)
+		&& (BaseLevel >= .min_lvl && BaseLevel <= .max_lvl))
+	showevent 1,1;
+	end;
+
+OnInit:
+	set .min_lvl,81;
+	set .max_lvl,100;
+	end;
+}
+
+hugel,66,152,4	script	Bounty Board 101-150#hug	2_BULLETIN_BOARD,{
+	setarray .@questId[0],62791 // Ancient Mimic
+						,62792; // Death Word
+	setarray .@mobId[0],1699 // Ancient Mimic
+						,1698; // Death Word
+	callfunc "F_BountyBoard",.@questId,.@mobId,.min_lvl,.max_lvl;
+	end;
+
+OnPCLoadMapEvent:
+	if (strcharinfo(3) == strnpcinfo(4)
+		&& (BaseLevel >= .min_lvl && BaseLevel <= .max_lvl))
+	showevent 1,1;
+	end;
+
+OnInit:
+	set .min_lvl,101;
+	set .max_lvl,150;
+	end;
+}
+
+hugel,65,151,4	script	Bounty Board 121-160#hug	2_BULLETIN_BOARD,{
+	setarray .@questId[0],62793 // Red Ferus
+						,62794 // Bewler
+						,62795 // Skogul
+						,62796 // Frus
+						,62798 // Blue Acidus
+						,62799; // Gold Acidus
+	setarray .@mobId[0],1714 // Red Ferus
+						,1717 // Bewler
+						,1752 // Skogul
+						,1753 // Frus
+						,1716 // Blue Acidus
+						,1713; // Gold Acidus
+	callfunc "F_BountyBoard",.@questId,.@mobId,.min_lvl,.max_lvl;
+	end;
+
+OnPCLoadMapEvent:
+	if (strcharinfo(3) == strnpcinfo(4)
+		&& (BaseLevel >= .min_lvl && BaseLevel <= .max_lvl))
+	showevent 1,1;
+	end;
+
+OnInit:
+	set .min_lvl,121;
+	set .max_lvl,160;
+	end;
+}

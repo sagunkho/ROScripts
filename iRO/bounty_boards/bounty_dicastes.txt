@@ -1,0 +1,57 @@
+/* * * * * * * * * * * 
+ * iRO Bounty Missions
+ * - http://irowiki.org/wiki/Bounty_Board_Quests
+ * 
+ * ------- V 1.0 ------
+ * Official iRO renewal repeatable Bounty Missions
+ * --------------------
+ * Credits: Smokexyz [sagunxp@gmail.com]
+ * * * * * * * * * * */
+
+dicastes01,196,48,4	script	Bounty Board 101-140#dic	2_BULLETIN_BOARD,{
+	setarray .@questId[0],62613 // Centipede
+						,62614 // Centipede Larva
+						,62615 // Tatacho
+						,62616; // Dolomedes
+	setarray .@mobId[0],1987 // Centipede
+						,1999 // Centipede Larva
+						,1986 // Tatacho
+						,2092; // Dolomedes
+	callfunc "F_BountyBoard",.@questId,.@mobId,.min_lvl,.max_lvl;
+	end;
+
+OnPCLoadMapEvent:
+	if (strcharinfo(3) == strnpcinfo(4)
+		&& (BaseLevel >= .min_lvl && BaseLevel <= .max_lvl))
+	showevent 1,1;
+	end;
+
+OnInit:
+	set .min_lvl,101;
+	set .max_lvl,140;
+	end;
+}
+
+dicastes01,196,46,4	script	Bounty Board 121-175#dic	2_BULLETIN_BOARD,{
+	setarray .@questId[0],62802 // Antler Scaraba
+						,62803  // Horn Scaraba
+						,62804  // Rake Horn Scaraba
+						,62805; // Uni-Horn Scaraba
+	setarray .@mobId[0],2085 // Antler Scaraba
+						,2084 // Horn Scaraba
+						,2086 // Rake Horn Scaraba
+						,2083; // Uni-Horn Scarbaa
+	callfunc "F_BountyBoard",.@questId,.@mobId,.min_lvl,.max_lvl;
+	end;
+
+OnPCLoadMapEvent:
+	if (strcharinfo(3) == strnpcinfo(4)
+		&& (BaseLevel >= .min_lvl && BaseLevel <= .max_lvl))
+	showevent 1,1;
+	end;
+
+OnInit:
+	set .min_lvl,121;
+	set .max_lvl,175;
+	end;
+}

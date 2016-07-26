@@ -1,0 +1,291 @@
+/* * * * * * * * * * * 
+ * iRO Bounty Missions
+ * - http://irowiki.org/wiki/Bounty_Board_Quests
+ * 
+ * ------- V 1.0 ------
+ * Official iRO renewal repeatable Bounty Missions
+ * All Towns Include -
+ * - Payon
+ * - Prontera
+ * - Geffen
+ * - Umbala
+ * - Comodo
+ * - Juno
+ * - Brasilis
+ * - Lighthalzen
+ * - Hugel
+ * - Rune Midgard Camp
+ * - El Dicastes
+ * - Mora
+ * --------------------
+ * Credits: Smokexyz [sagunxp@gmail.com]
+ * * * * * * * * * * */
+ 
+
+function	script	F_BountyBoard	{
+	copyarray .@questId,getarg(0),getarraysize(getarg(0));
+	copyarray .@mobId,getarg(1),getarraysize(getarg(1));
+	set .@min_lvl,getarg(2);
+	set .@max_lvl,getarg(3);
+	set .@name$,"[ Bounty Board ]";
+	mes .@name$;
+	if(BaseLevel < .@min_lvl || BaseLevel > .@max_lvl)
+	{	
+		for(.@i=0; .@i<getarraysize(.@questId); .@i++)
+			if(questprogress(.@questId[.@i],HUNTING) == 2)
+			{
+				mes "You are currently on a mission taken from this board.";
+				mes "You can either complete the mission, or remove it.";
+				next;
+				switch(select("I will complete the mission.","I want to remove the mission.","I'll be back later")) {
+					case 1:
+						goto CompleteBounty;
+					case 2:
+						goto RemoveBounty;
+					default:
+						close;
+				}
+			}
+		mes "These bounties are available only to adventurers who are between the levels "+.@min_lvl+"-"+.@max_lvl+".";
+		close;
+	}
+	mes "You've stumbled upon what appears to be a bulletin board with wanted ads.";
+	mes "Take a closer look?";
+	next;
+	mes .@name$;
+	mes "There are many listings for monster hunting.";
+	next;
+	switch(select("Check bounty missions.",
+				"Collect bounty rewards.",
+				"Where do I go to hunt?",
+				"Search for other bounty hunters.",
+				"I want to QUIT hunting.",
+				"I'll come back later.")) {
+		case 1:
+			mes .@name$;
+			mes "There is a list of monsters on the board.";
+			mes "Looking through it you decide to take one hunting task.";
+			next;
+			set .@menu$,"";
+			for(.@i=0; .@i<getarraysize(.@questId); .@i++) {
+				set .@menu$, .@menu$ + strmobinfo(2,.@mobId[.@i]);
+				if(.@i < getarraysize(.@questId)-1) set .@menu$,.@menu$+":";
+				else if (.@i == getarraysize(.@questId)-1) set .@menu$,.@menu$+":Hunt All";
+			}
+			set .@mob,select(.@menu$)-1;
+			if(.@mob == getarraysize(.@questId)) {
+				mes .@name$;
+				mes "Are you sure you will be able to hunt all missions?";
+				mes "The reward for submitting all missions at once is ^9900991 Eden Merit Badge^000000.";
+				next;
+				if(select("- Proceed","- Cancel") == 2) close;
+				mes .@name$;
+				mes "You have undertaken the following missions -";
+				for(.@i=0; .@i<getarraysize(.@questId); .@i++) {
+					if(!questprogress(.@questId[.@i],HUNTING)) setquest .@questId[.@i];
+					mes "Hunt 150 "+strmobinfo(2,.@mobId[.@i]);
+				}
+				next;
+				mes .@name$;
+				mes "Keep your eye on the prize.";
+				mes "Good luck and God speed!";
+				break;
+			}
+			mes .@name$;
+			mes "There is a bounty to hunt 150 "+strmobinfo(2,.@mobId[.@mob])+".";
+			next;
+			if(select("I'll do it.","Uhh actually nevermind.") == 2) close;
+			if(!questprogress(.@questId[.@mob])) setquest .@questId[.@mob];
+			mes .@name$;
+			mes "You have accepted the bounty to hunt "+strmobinfo(2,.@mobId[.@mob]); 
+			break;
+		case 2:
+		CompleteBounty:
+			mes .@name$;
+			mes "You are ready to collect your bounty.";
+			mes "Which bounty do you want to collect?";
+			next;
+			mes .@name$;
+			mes "You will receive ^FF00001 Eden Merit Badge^000000 if all bounties are collected together.";
+			mes "Otherwise, zeny and Base/Job Exp are rewarded alone.";
+			mes "^FF0000VIP Accounts get to choose how to distribute experience points.^000000";
+			next;
+			switch(select("Collect 1 bounty","Collect ALL bounties")) {
+				case 1:
+					set .@menu$,"";
+					for(.@i=0; .@i<getarraysize(.@questId); .@i++) {
+						set .@menu$, .@menu$ + strmobinfo(2,.@mobId[.@i]);
+						if(.@i < getarraysize(.@questId)-1) set .@menu$,.@menu$+":";
+					}
+					set .@mob,select(.@menu$)-1;
+					next;
+					callfunc("F_CheckBounty",.@questId[.@mob],.@mobId[.@mob],.@total_complete);
+					if(!.@total_complete)
+					{
+						mes .@name$;
+						mes "You have not completed the Bounty Mission.";
+						mes "Lying will not be tolerated.";
+						specialeffect2 60;
+					}
+					break;
+				case 2:
+					mes .@name$;
+					mes "Oh you fancy yourself a good hunter eh?";
+					mes "Let me see if you've actually hunted all the monsters you said you would.";
+					next;
+					for(.@i=0; .@i<getarraysize(.@questId); .@i++)
+						callfunc "F_CheckBounty",.@questId[.@i],.@mobId[.@i],.@total_complete;
+					if(!.@total_complete)
+					{
+						mes .@name$;
+						mes "The bounty for any of your missions have not been completed.";
+						mes "Lying will not be tolerated.";
+						specialeffect2 60;
+					}
+					else if(.@total_complete < getarraysize(.@questId))
+					{
+						mes .@name$;
+						mes "The bounty for "+(getarraysize(.@questId)-.@total_complete)+" of this board's missions have not been completed.";
+						mes "Lying will not be tolerated.";
+						specialeffect2 60;
+					}
+					else if(.@total_complete == getarraysize(.@questId))
+					{
+						mes .@name$;
+						mes "Outstanding!";
+						mes "You've completed all your missions successfully.";
+						next;
+						mes .@name$;
+						mes "Here's your ^990099Eden Merit Badge^000000!";
+						getitem 6495,1; // Merit Badge
+					}
+					break;
+				default:
+					close;
+			}
+			break;
+		case 3:
+			mes .@name$;
+			mes "Monsters can be found by using the @whereis <mob ID/name> command.";
+			break;
+		case 4:
+			mes .@name$;
+			mes "To search for other Bounty Hunters, please use the party booking and recruiting window.";
+			mes "The button is usually located under the status window on your screen.";
+			break;
+		case 5:
+		RemoveBounty:
+			mes .@name$;
+			mes "Are you sure you wish to quit hunting?";
+			mes "^FF0000All current progress of the quest will be lost^000000.";
+			if(select("Continue","Cancel") == 2) close;
+			else
+			{
+				next;
+				set .@menu$,"";
+				for(.@i=0; .@i<getarraysize(.@questId); .@i++) {
+					set .@menu$, .@menu$ + strmobinfo(2,.@mobId[.@i]);
+					if(.@i < getarraysize(.@questId)-1) set .@menu$,.@menu$+":";
+					else if (.@i == getarraysize(.@questId)-1) set .@menu$,.@menu$+":Remove all";
+				}
+				set .@mob,select(.@menu$)-1;
+				if(.@mob == getarraysize(.@questId)) {
+					mes .@name$;
+					mes "Are you sure you want to remove all missions?";
+					next;
+					if(select("- Proceed","- Cancel") == 2) close;
+					mes .@name$;
+					mes "The following missions have been removed -";
+					for(.@i=0; .@i<getarraysize(.@questId); .@i++) {
+						if(questprogress(.@questId[.@i],HUNTING)) erasequest .@questId[.@i];
+						mes "Hunt 150 "+strmobinfo(2,.@mobId[.@i]);
+					}
+					break;
+				}
+				mes .@name$;
+				mes "Are you sure you wish to remove the Hunt 150 "+strmobinfo(2,.@mobId[.@mob])+" bounty mission?";
+				next;
+				if(select("- Proceed","Uhh actually nevermind.") == 2) close;
+				if(questprogress(.@questId[.@mob])) erasequest .@questId[.@mob];
+				mes .@name$;
+				mes "Your bounty to hunt "+strmobinfo(2,.@mobId[.@mob])+" has been removed."; 
+				break;		
+			}
+			break;
+		default:
+			close;
+	}
+	close;
+}
+
+function	script	F_CheckBounty	{
+	set .@questId,getarg(0);
+	set .@mobId,getarg(1);
+	set .@name$,"[ Bounty Board ]";
+	
+	if(questprogress(.@questId,HUNTING) == 2)
+	{
+		set .@base_exp,(strmobinfo(8,.@mobId)*75/100)*150;
+		set .@job_exp,(strmobinfo(9,.@mobId)*75/100)*150;
+		set .@zeny,37500;
+		mes .@name$;
+		mes "Brilliant!";
+		mes "Hunting 150 "+strmobinfo(2,.@mobId)+" has been complete.";
+		next;
+		if(isvip()) 
+		{
+			mes .@name$;
+			mes "How will you distribute your newfound experience?";
+			next;
+			do {
+				switch(select("^990099I want both Base/Job Exp^000000",
+								"^009900I want Base Exp only^000000",
+								"^000099I want Job Exp only^000000")) {
+					case 2:
+						set .@bexp,.@base_exp+.@job_exp;
+						set .@jexp,0;
+						break;
+					case 3:
+						set .@bexp,0;
+						set .@jexp,.@base_exp+.@job_exp;
+						break;
+					default:
+						set .@bexp,.@base_exp;
+						set .@jexp,.@job_exp;
+						break;
+				}
+				mes .@name$;
+				mes "You will be rewarded with the following - ";
+				mes "Base Exp : "+callfunc("int__",.@bexp)+" Exp";
+				mes "Job Exp : "+callfunc("int__",.@jexp)+" Exp";
+				mes "Zeny : "+callfunc("int__",.@zeny)+"Z";
+				next;
+				if(select("- Proceed","- Re-consider") == 1)
+					set .@confirm,1;
+			} while(!.@confirm);
+		}
+		else 
+		{
+			set .@bexp,.@base_exp;
+			set .@jexp,.@job_exp;
+			mes .@name$;
+			mes "You will be rewarded with the following - ";
+			mes "Base Exp : "+callfunc("int__",.@bexp)+" Exp";
+			mes "Job Exp : "+callfunc("int__",.@jexp)+" Exp";
+			mes "Zeny : "+callfunc("int__",.@zeny)+"Z";
+			next;
+		}
+		mes .@name$;
+		mes "Your rewards have been sanctioned.";
+		erasequest .@questId;
+		getexp .@bexp,.@jexp;
+		set Zeny,Zeny+.@zeny;
+		set getarg(2),getarg(2)+1;
+		next;
+		return 1;
+	}
+	mes .@name$;
+	mes "Hunting 150 "+strmobinfo(2,.@mobId)+" has NOT been completed!";
+	next;
+	return 0;
+}

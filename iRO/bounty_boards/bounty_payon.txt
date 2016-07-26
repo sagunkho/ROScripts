@@ -1,0 +1,103 @@
+/* * * * * * * * * * * 
+ * iRO Bounty Missions
+ * - http://irowiki.org/wiki/Bounty_Board_Quests
+ * 
+ * ------- V 1.0 ------
+ * Official iRO renewal repeatable Bounty Missions
+ * --------------------
+ * Credits: Smokexyz [sagunxp@gmail.com]
+ * * * * * * * * * * */
+
+payon,148,95,4	script	Bounty Board 1-20#pay	2_BULLETIN_BOARD,{
+	setarray .@questId[0],62644 // willow
+						,62565 // Spore
+						,62566; // Boa
+	setarray .@mobId[0],1010 // Willow
+						,1014 // Spore
+						,1025; // Boa
+	callfunc "F_BountyBoard",.@questId,.@mobId,.min_lvl,.max_lvl;
+	end;
+
+OnPCLoadMapEvent:
+	if (strcharinfo(3) == strnpcinfo(4)
+		&& (BaseLevel >= .min_lvl && BaseLevel <= .max_lvl))
+	showevent 1,1;
+	end;
+
+OnInit:
+	set .min_lvl,1;
+	set .max_lvl,20;
+	end;
+}
+
+payon,148,93,4	script	Bounty Board 21-50#pay	2_BULLETIN_BOARD,{
+	setarray .@questId[0],62567 // Big foot
+						,62666 // Horn
+						,62560 // Skeleton
+						,62561; // Soldier Skeleton
+	setarray .@mobId[0],1060 // Big Foot
+						,1128 // Horn
+						,1076 // Skeleton
+						,1028; // Soldier Skeleton
+	callfunc "F_BountyBoard",.@questId,.@mobId,.min_lvl,.max_lvl;
+	end;
+
+OnPCLoadMapEvent:
+	if (strcharinfo(3) == strnpcinfo(4)
+		&& (BaseLevel >= .min_lvl && BaseLevel <= .max_lvl))
+	showevent 1,1;
+	end;
+
+OnInit:
+	set .min_lvl,21;
+	set .max_lvl,50;
+	end;
+}
+
+payon,148,91,4	script	Bounty Board 41-75#pay	2_BULLETIN_BOARD,{
+	setarray .@questId[0],62569 // Greatest General
+					,62645 // Wolf
+					,62562 // Archer Skeleton
+					,62563 // Munak
+					,62564; // Bongun
+	setarray .@mobId[0],1010 //  Greatest General
+				,1013 // Wolf 
+				,1016 // Archer Skeleton
+				,1026 // Munak
+				,1188; // Bongun
+	callfunc "F_BountyBoard",.@questId,.@mobId,.min_lvl,.max_lvl;
+	end;
+
+OnPCLoadMapEvent:
+	if (strcharinfo(3) == strnpcinfo(4)
+		&& (BaseLevel >= .min_lvl && BaseLevel <= .max_lvl))
+	showevent 1,1;
+	end;
+
+OnInit:
+	set .min_lvl,41;
+	set .max_lvl,75;
+	end;
+}
+
+payon,148,89,4	script	Bounty Board 61-100#pay	2_BULLETIN_BOARD,{
+	setarray .@questId[0],62648 // Sohee
+					,62649 // Dokebi
+					,62650; // Nine-Tail
+	setarray .@mobId[0],1170 // Sohee
+				,1110 // Dokebi
+				,1180; // Nine-Tail
+	callfunc "F_BountyBoard",.@questId,.@mobId,.min_lvl,.max_lvl;
+	end;
+
+OnPCLoadMapEvent:
+	if (strcharinfo(3) == strnpcinfo(4)
+		&& (BaseLevel >= .min_lvl && BaseLevel <= .max_lvl))
+	showevent 1,1;
+	end;
+
+OnInit:
+	set .min_lvl,61;
+	set .max_lvl,100;
+	end;
+}
