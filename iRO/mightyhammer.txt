@@ -1,0 +1,329 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * _______ _______  _____  _     _ _______ _     _ __   __ ______  *
+ * |______ |  |  | |     | |____/  |______  \___/    \_/    ____/  *
+ * ______| |  |  | |_____| |    \_ |______ _/   \_    |    /_____  *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *                                                                 *
+ * iRO Mighty Hammer                                               *
+ * Script Version 1.0                                              *
+ * * * * * * * * * * * * *  Credits  * * * * * * * * * * * * * * * *
+ * Smokexyz [sagunxp@gmail.com]                                    *
+ * Skype - smokekho                                                *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * Version 1.0
+ * Source - iRO Wiki
+ * - Your gear must be +7 or higher in order to begin upgrading.
+ * - Continue upgrading without exiting NPC conversation
+ *   (if HD Ores are present in your inventory.)
+ * - Custom Feature: Utilizes kRO Safe to +N Certificates.
+ * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+moc_para01,38,185,4	script	Mighty Hammer	4_M_DWARF,{
+	disable_items;
+	set .@name$,"[^0000FFBlacksmith Mighty Hammer^000000]";
+	mes .@name$;
+	mes "Unlike others, I am a blacksmith who can refine items without breaking them!";
+	mes "I refine items that are 7 ~ 9 with ^377664HD Elunium^000000 and ^366664HD Oridecon^000000.";
+	mes "My specialty is that even if my refining ^FF0000fails, the level decreases by just 1 level without losing the gear.^000000 isn't it great?";
+	next;
+	mes .@name$;
+	mes "I can also use ^377664HD Carnium^000000 and ^377664HD Bradium^000000 + "+callfunc("int__",.HD10RefineCost)+"z to refine items that are ";
+	mes "^990000+10 and higher.^000000";
+	mes "If I fail the item will only degrade 1 level except if the item is +10, in which case it ^000099will stay +10^000000!";
+	mes "Thats where I earned my nickname of ^009900'ole +11'^000000 back in Blacksmith college!";
+	mes "^FF0000Safe to +n^000000 Armor, Headgear and Weapon Certificates to prevent a downgrade.";
+	next;
+	mes .@name$;
+	mes "By happenstance I can also use the '^000099Safe to +6/7/8/9 Certificates^000000' along with Elunium-Oridecon to make the attempts from 4 to 6 safe.";
+	next;
+	mes .@name$;
+	mes "If by some Miracle you have a ^000099Safe to +10 certificate^000000 then I can attempt to go from +9 to +10,";
+	mes "consume the Certificate and the HD Ore and ensure the item does NOT degrade on Failure.";
+	mes "If the item gets to +9, and you have one of the Safe to +10 Certificates in inventory then that special option will open up.";
+	mes "So lets kick this into overdrive, what d'ya say?";
+	next;
+	setarray .@position$[1], "Head","Body","Left hand","Right hand","Robe","Shoes","Accessory 1","Accessory 2","Head 2","Head 3";
+	set .@menu$,"";
+	for( set .@i,1; .@i <= 10; set .@i,.@i+1 )
+	{
+		if( getequipisequiped(.@i) )
+			set .@menu$, .@menu$ + .@position$[.@i] + "-" + "[ ^FF0090" + getequipname(.@i) + "^000000 ]";
+		else
+			set .@menu$, .@menu$ + .@position$[.@i] + "- Empty";
+		set .@menu$, .@menu$ + ":";
+	}
+	set .@part,select(.@menu$);
+	if( !getequipisequiped(.@part) )
+	{
+		mes .@name$;
+		mes "You're not wearing anything...";
+		close;
+	}
+	else if( !getequipisenableref(.@part) )
+	{
+		mes .@name$;
+		mes "I don't think this item is refine-able at all.";
+		close;
+	}
+	else if( !getequipisidentify(.@part) )
+	{
+		mes .@name$;
+		mes "This item has not been identified. So, it can't be refined.";
+		close;
+	}
+	set .@equipRefLevel,getequiprefinerycnt(.@part);
+	if ( .@equipRefLevel < 4 )
+	{
+		mes .@name$;
+		mes "Make sure the item is at least +4, before asking me to upgrade it.";
+		close;
+	}
+	set .@equipLv,getequipweaponlv(.@part);
+	if( .@equipLv != 0 && .@equipLv < 3 )
+	{
+		mes .@name$;
+		mes "I'm sorry your Weapon must be of level 3 or 4 before I can upgrade it.";
+		close;
+	}
+RefineStart:
+	set .@certId,0; // Reset CertId on loop
+	set .@equipRefLevel,getequiprefinerycnt(.@part); // Refresh Refine Level
+	mes .@name$;
+	switch(.@part)
+	{
+		case 1: // Upper Head
+			if(.@part == 1) mes "I'm a blacksmith, not a hairstylist.";
+		case 2: // Body
+			if(.@part == 2) mes "With my hammer, I will make you a star of the sky.";
+		case 5: // Robe
+			if(.@part == 5) mes "Bring out the item so I can refine it!";
+		case 6: // Shoes
+			if(.@part == 6) mes "Where is this foot order coming from?";
+			if(.@HD10Refine) goto HDRef10Armor;
+			switch(.@equipRefLevel) {
+				case 4:
+				case 5:
+					if(.@HDRefine) goto HDRef7Armor;
+					set .@certId,.SafeTo6ArmorCertificate; // Safe to 6 Armor
+					set .@reqOre,.NormalElunium; // Normal Elunium
+					break;
+				case 6:
+					if(.@HDRefine) goto HDRef7Armor;
+					set .@certId,.SafeTo7ArmorCertificate; // Safe to 7 Armor
+					set .@reqOre,.NormalElunium; // Normal Elunium
+					break;
+				case 7:
+				HDRef7Armor:
+					if(countitem(.SafeTo8ArmorCertificate)) {
+						set .@certId,.SafeTo8ArmorCertificate; // Safe to 8 Armor
+						set .@reqOre,.NormalElunium; // Normal Elunium
+					} else {
+						set .@reqOre,.HDElunium; // HD Elunium
+						set .@HDRefine,1;
+					}
+					break;
+				case 8:
+					if(countitem(.SafeTo9ArmorCertificate)) {
+						set .@certId,.SafeTo9ArmorCertificate; // Safe to 9 Armor
+						set .@reqOre,.NormalElunium; // Normal Elunium
+					} else {
+						set .@reqOre,.HDElunium; // HD Elunium
+						set .@HDRefine,1;
+					}
+					break;
+				case 9:
+					if(countitem(.SafeTo10ArmorCertificate)) set .@certId,.SafeTo10ArmorCertificate; // Safe to 10 Cert
+					set .@reqOre,.HDElunium; // HD Elunium
+					break;
+				case 10:
+				HDRef10Armor:
+					set .@reqOre,.HDCarnium;
+					set .@HD10Refine,1;
+					break;
+				default:
+					if(.@HDRefine) goto HDRef7Armor;
+					close;
+			}
+			break;
+		// Weapons
+		case 3:
+		case 4:
+			mes "Making artificial hands is not my specialty.";
+			if(.@HD10Refine) goto HDRef10Weapon;
+			switch(.@equipRefLevel) {
+				case 4:
+				case 5:
+					if(.@HDRefine) goto HDRef7Weapon;
+					set .@certId,.SafeTo6WeaponCertificate; // Safe to 6 Weapon
+					set .@reqOre,.NormalOridecon; // Normal Oridecon
+					break;
+				case 6:
+					if(.@HDRefine) goto HDRef7Weapon;
+					set .@certId,.SafeTo7WeaponCertificate; // Safe to 7 Weapon
+					set .@reqOre,.NormalOridecon; // Normal Oridecon
+					break;
+				case 7:
+				HDRef7Weapon:
+					if(countitem(.SafeTo8WeaponCertificate)) {
+						set .@certId,.SafeTo8WeaponCertificate; // Safe to 8 Weapon
+						set .@reqOre,.NormalOridecon; // Normal Oridecon
+					} else {
+						set .@reqOre,.HDOridecon; // HD Oridecon
+						set .@HDRefine,1;
+					}
+					break;
+				case 8:
+					if(countitem(.SafeTo9WeaponCertificate)) {
+						set .@certId,.SafeTo9WeaponCertificate; // Safe to 9 Weapon
+						set .@reqOre,.NormalOridecon; // Normal Oridecon
+					} else {
+						set .@reqOre,.HDOridecon; // HD Oridecon
+						set .@HDRefine,1;
+					}
+					break;
+				case 9:
+					set .@certId,.SafeTo10WeaponCertificate; // Safe to 10 Cert
+					set .@reqOre,.HDOridecon; // HD Oridecon
+					break;
+				case 10:
+				HDRef10Weapon:
+					set .@reqOre,.HDBradium;
+					set .@HD10Refine,1;
+					break;
+				default:
+					if(.@HDRefine) goto HDRef7Weapon;
+					close;
+			}
+			break;
+	/* No case for refining other equipments parts/slots.
+		case 7:
+		case 8:
+		case 9:
+		case 10:
+	*/
+		default:
+			mes "What do you want me to refine?";
+			close;
+	}
+	set .@zenyCost,(.equipRefLevel<10)?.NormalRefineCost:.HD10RefineCost; // Amount of Zeny to be consumed.
+	set .@totalOres,countitem(.@reqOre);
+	if(.@certId) {
+		if(!countitem(.@certId) || !.@totalOres)
+			set .@attempts,0;
+		else if(.@certId) {
+				set .@totalCerts,countitem(.@certId);
+				set .@offset,abs(.@totalCerts-.@totalOres);
+				set .@attempts,(.@totalCerts+.@totalOres-.@offset)/2;
+		}
+	}
+	else set .@attempts,.@totalOres;
+	set .@successRate,getequippercentrefinery(.@part);
+	mes "Attempts remaining: ^000099"+.@attempts+"^000000";
+	mes "Item : ^990000+"+.@equipRefLevel+"^000000 ^009900"+getequipname(.@part)+"^000000";
+	mes "Success chance : "+.@successRate+"%";
+	mes "can be upgraded with -";
+	if(.@equipRefLevel < 10) {
+		mes "^009900"+getitemname(.@equipLv?.NormalOridecon:.NormalElunium)+"^000000 : ^FF0000UNSAFE - BREAK^000000!";
+		mes "^009900"+getitemname(.@equipLv?.HDOridecon:.HDElunium)+"^000000 : ^FF0000UNSAFE -^000000 ^000099DEGRADE^000000!";
+		mes "Required Zeny - "+callfunc("int__",.@zenyCost)+"z";
+	} else {
+		mes "^009900"+getitemname(.@equipLv?.HDBradium:.HDCarnium)+"^000000 : ^FF0000UNSAFE -^000000 ^000099DEGRADE^000000!";
+	}
+	next;
+	set .@option$,(.@certId?(getitemname(.@certId)+" and "):"")+"1 "+getitemname(.@reqOre);
+	if(select(.@option$,"Please stop") == 2) {
+		mes .@name$;
+		mes "Well that is your choice.";
+		close;
+	} else if(!.@attempts) {
+		mes .@name$;
+		mes "Didn't you say you have everything ready?";
+		mes "1 "+getitemname(.@reqOre);
+		if(.@certId) mes "and 1 "+getitemname(.@certId)+".";
+		close;
+	} else {
+		if(Zeny < .@zenyCost) {
+			mes .@name$;
+			mes "I thought you said you were ready!";
+			mes "You don't have enough Zeny for the upgrade.";
+			next;
+			mes .@name$;
+			mes "Have at least "+callfunc("int__",.@zenyCost)+"z in your inventory.";
+			close;
+		}
+		// Consume requirements
+		dispbottom "1 "+getitemname(.@reqOre)+" has been consumed.";
+		delitem .@reqOre,1;
+		dispbottom callfunc("int__",.@zenyCost)+"z has been consumed.";
+		set Zeny,Zeny-.@zenyCost;
+		// Process refine
+		if(.@successRate > rand(100)) {
+			successrefitem .@part;
+			emotion e_no1;
+			mes .@name$;
+			mes "Did I not tell you that I'm worth it?";
+			mes "I have refined your item successfully, without a scratch.";
+			next;
+		} else {
+			// Consume cert if required
+			if(.@certId) delitem .@certId,1;
+			mes .@name$;
+			mes "By odin's beard... I hadn't expected a negative outcome.";
+			emotion (!rand(5))?e_cash:e_omg;
+			if(.@certId) {
+				mes "But with your certificate, the item stays safe.";
+				specialeffect2 155; // Failed Refine Effect
+			} else if(.@equipRefLevel != 10) { // Do not degrade if refine level is less than 10.
+				mes "I'm sorry! your item has downgraded by 1 refine level.";
+				downrefitem .@part,1;
+			}
+			else specialeffect2 155; // Failed Refine Effect
+			mes "May be my next attempt will be a success, please try again.";
+			next;
+		}
+		goto RefineStart;
+	}
+
+OnStarteffect:
+	specialeffect 154;
+	sleep 10000; specialeffect 154;
+	goto OnStarteffect;
+	end;
+
+OnInit:
+	set .NormalOridecon,984;
+	set .NormalElunium,985;
+	set .HDOridecon,6240;
+	set .HDElunium,6241;
+	set .HDCarnium,6225;
+	set .HDBradium,6226;
+	// Safe Armor Certificates
+	set .SafeTo6ArmorCertificate,6235;
+	set .SafeTo7ArmorCertificate,6234;
+	set .SafeTo8ArmorCertificate,6233;
+	set .SafeTo9ArmorCertificate,6232;
+	set .SafeTo10ArmorCertificate,6457;
+	// Safe Weapon Certificates
+	set .SafeTo6WeaponCertificate,6231;
+	set .SafeTo7WeaponCertificate,6230;
+	set .SafeTo8WeaponCertificate,6229;
+	set .SafeTo9WeaponCertificate,6228;
+	set .SafeTo10WeaponCertificate,6457; // same as armor
+	set .HD10RefineCost,100000;
+	set .NormalRefineCost,50000;
+	goto OnStarteffect;
+	end;
+}
+
+// mes By Odin's beard that was bad luck!!
+// mes Well I failed but it is the same level uas before
+prt_in,59,54,3	duplicate(Mighty Hammer)	Mighty Hammer#prt	4_M_DWARF
+morocc_in,65,30,3	duplicate(Mighty Hammer)	Mighty Hammer#morocc	4_M_DWARF
+payon,148,176,3	duplicate(Mighty Hammer)	Mighty Hammer#pay	4_M_DWARF
+alberta_in,16,56,3	duplicate(Mighty Hammer)	Mighty Hammer#alb	4_M_DWARF
+yuno_in01,171,18,3	duplicate(Mighty Hammer)	Mighty Hammer#yuno	4_M_DWARF
+ein_in01,22,82,3	duplicate(Mighty Hammer)	Mighty Hammer#ein	4_M_DWARF
+lhz_in02,280,19,3	duplicate(Mighty Hammer)	Mighty Hammer#lhz	4_M_DWARF
+
+
+//moc_para01,44,185,4	shop	Refine Testing Shop	4_M_DWARF,984:1,985:1,6240:1,6241:1,6225:1,6226:1,6235:1,6234:1,6232:1,6231:1,6230:1,6229:1,6228:1,6457:1
