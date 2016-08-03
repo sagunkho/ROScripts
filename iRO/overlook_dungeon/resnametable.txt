@@ -1,0 +1,25 @@
+// Overlook Water Dungeons
+iz_dun00t.gnd#iz_dun00.gnd#
+iz_dun00t.gat#iz_dun00.gat#
+iz_dun00t.rsw#iz_dun00.rsw#
+유저인터페이스\map\iz_dun00t.bmp#유저인터페이스\map\iz_dun00.bmp#
+
+iz_dun01t.gnd#iz_dun01.gnd#
+iz_dun01t.gat#iz_dun01.gat#
+iz_dun01t.rsw#iz_dun01.rsw#
+유저인터페이스\map\iz_dun01t.bmp#유저인터페이스\map\iz_dun01.bmp#
+
+iz_dun02t.gnd#iz_dun02.gnd#
+iz_dun02t.gat#iz_dun02.gat#
+iz_dun02t.rsw#iz_dun02.rsw#
+유저인터페이스\map\iz_dun02t.bmp#유저인터페이스\map\iz_dun02.bmp#
+
+iz_dun03t.gnd#iz_dun03.gnd#
+iz_dun03t.gat#iz_dun03.gat#
+iz_dun03t.rsw#iz_dun03.rsw#
+유저인터페이스\map\iz_dun03t.bmp#유저인터페이스\map\iz_dun03.bmp#
+
+iz_dun04t.gnd#iz_dun04.gnd#
+iz_dun04t.gat#iz_dun04.gat#
+iz_dun04t.rsw#iz_dun04.rsw#
+유저인터페이스\map\iz_dun04t.bmp#유저인터페이스\map\iz_dun04.bmp#
