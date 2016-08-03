@@ -65,12 +65,6 @@ moc_para01,38,185,4	script	Mighty Hammer	4_M_DWARF,{
 		mes "I don't think this item is refine-able at all.";
 		close;
 	}
-	else if( !getequipisidentify(.@part) )
-	{
-		mes .@name$;
-		mes "This item has not been identified. So, it can't be refined.";
-		close;
-	}
 	set .@equipRefLevel,getequiprefinerycnt(.@part);
 	if ( .@equipRefLevel < 4 )
 	{
