@@ -28,6 +28,7 @@
  * - Fixed display of Exp in string format.
  * - Fixed bug with reset stone, it will now delete all cool-downs and
  *   current un-submitted quests.
+ * - Added variables for Reset Cost & Exp Rate Modifiers ((MobEXP * modifier) + Happy Hour Bonus).
  *
  * Note that this does not completely emulate 100% iRO gramps;
  * iRO switched quest level categories to 3 from 4. This will
@@ -35,7 +36,168 @@
  * * * * * * * * * * * * * * * * * * * */
 
 moc_para01,29,35,4	script	Gramps	4_M_LGTGRAND,{
+	goto start_script;
+/*****************************************************************************
+ *							Main Configuration								 *
+ *****************************************************************************/
 
+OnInit:
+	/* * * * * * * * * * * * * * * *
+	 * Configurable Options
+	 * * * * * * * * * * * * * * * */
+	set .ResetCost,1;           // Cost of Premium Stones to reset cool-downs.
+	set .ExtraMobSpawnAmount,50; // Amount of extra mobs that spawn.
+	// ----- Eden Merit Badge Rewards
+	// --- Hunting 100
+	set .Reward_MeritBadgeAmount_100,1;
+	set .Reward_MeritBadgeAmount_100_VIP,2;
+	set .Hunt100Modifier,100;  // (MobEXP * this modifier) + Happy Hour Bonus
+	// --- Hunting 200
+	set .Reward_MeritBadgeAmount_200,1;
+	set .Reward_MeritBadgeAmount_200_VIP,2;
+	set .Hunt200Modifier,200;  // (MobEXP * this modifier) + Happy Hour Bonus
+	// --- Hunting 400
+	set .Reward_MeritBadgeAmount_400,1; // Official
+	set .Reward_MeritBadgeAmount_400_VIP,2;
+	set .Hunt400Modifier,400;  // (MobEXP * this modifier) + Happy Hour Bonus
+	// ------ Happy Hour Rates -------
+	set .HH_MinBaseExpRate,5;  // Minimum Base Exp Rates
+	set .HH_MinJobExpRate,5;   // Minimum Job Exp Rate
+	set .HH_MaxBaseExpRate,15; // Max Base Exp Rate
+	set .HH_MaxJobExpRate,15;  // Max Job Exp Rate
+
+	// DO NOT TOUCH BELOW THIS POINT
+	// STATIC CONFIGURATION
+	// --- 70 ~ 90
+	setarray .location7090$[1],"The Underground Forest"
+					          ,"Hoomga Forests"
+						      ,"Shrine of Gonryun's Queen"
+						      ,"Mine Dungeons"
+						      ,"Einbroch Fields"
+						      ,"Grim Reaper's Valley"
+						      ,"Geffen Dungeons"
+						      ,"Karu, the West Cave"
+						      ,"The Abyss Lake"
+						      ,"Turtle Island Dungeons"
+						      ,"Glast Heim Underprison";
+	setarray .maps7090$[1],"ama_dun02","um_fild02","gon_dun01","ein_dun02","ein_fild08","lhz_fild02","gef_dun02","beach_dun","hu_fild05","tur_dun02","gl_prison1";
+	setarray .mapx7090[1],32        ,192     ,163     ,291     ,29      ,36      ,215    ,245    ,43     ,167    ,150;
+	setarray .mapy7090[1],44        ,365     ,267     ,292     ,279     ,224     ,63     ,65     ,208    ,23     ,14;
+	setarray .quest7090_1[1],60465  ,60472   ,60452   ,60507   ,60525   ,60537   ,60549  ,60571  ,60579  ,60488  ,60557;
+	setarray .mobid7090_1[1],1402   ,1499    ,1417    ,1622    ,1613    ,1215    ,1143   ,1256   ,1715   ,1316   ,1196;
+	setarray .quest7090_2[1],60466  ,60473   ,60451   ,60508   ,60526   ,60538   ,60550  ,60572  ,60584  ,60489  ,60558;
+	setarray .mobid7090_2[1],1403   ,1498    ,1410    ,1617    ,1619    ,1162    ,1109   ,1148   ,1718   ,1314   ,1257;
+	setarray .quest7090_3[1],0      ,0       ,0       ,60477   ,0       ,0       ,0      ,0      ,0      ,0      ,0;
+	setarray .mobid7090_3[1],0      ,0       ,0       ,1615    ,0       ,0       ,0      ,0      ,0      ,0      ,0;
+	// --- 91 ~ 110
+	setarray .location91110$[1],"Ice Caves"
+							   ,"Valley of Gyoll"
+							   ,"Audhumbla Grasslands"
+							   ,"Fields near Veins"
+							   ,"Glast Heim Culvert"
+							   ,"Roads of Nogg"
+							   ,"Skellington, a Solitary Village in Nifflheim"
+							   ,"Turtle Palace"
+							   ,"Roads of Nogg"
+							   ,"The Plains of Ida"
+							   ,"Audhumbla Grasslands"
+							   ,"Portus Luna"
+							   ,"Inside Morroc's Pyramids";
+	setarray .maps91110$[1],"ice_dun03","nif_fild02","ra_fild04","ve_fild04","gl_sew01","mag_dun02","nif_fild01","tur_dun04","mag_dun01","ra_fild12","ra_fild05","ra_fild06","moc_pryd06";
+	setarray .mapx91110[1],149       ,167     ,202     ,51      ,258    ,47      ,215     ,100     ,126     ,175     ,336     ,202     ,192;
+	setarray .mapy91110[1],22        ,234     ,208     ,250     ,255    ,30      ,229     ,192     ,68      ,200     ,268     ,214     ,8;
+	setarray .quest91110_1[1],60459  ,60467   ,60570   ,60503   ,60535  ,60553   ,60561   ,60588   ,60590   ,60515   ,60543   ,60545   ,60551;
+	setarray .mobid91110_1[1],1778   ,1504    ,1680    ,1780    ,1253   ,1384    ,1509    ,1318    ,1367    ,1627    ,1133    ,1135    ,1194;
+	setarray .quest91110_2[1],60460  ,60468   ,60445   ,60504   ,60536  ,60554   ,60562   ,60589   ,60591   ,60516   ,60544   ,60575   ,60552;
+	setarray .mobid91110_2[1],1777   ,1505    ,1106    ,1781    ,1194   ,1385    ,1510    ,1315    ,1366    ,1782    ,1134    ,1282    ,1297;
+	setarray .quest91110_3[1],0      ,0       ,0       ,60565   ,0      ,0       ,0       ,0       ,0       ,0       ,0       ,0       ,0;
+	setarray .mobid91110_3[1],0      ,0       ,0       ,1836    ,0      ,0       ,0       ,0       ,0       ,0       ,0       ,0       ,0;
+	// --- 111 ~ 130
+	setarray .location111130$[1],"The Cursed Monastery"
+							    ,"Geffenia"
+							    ,"The Shrines of Odin"
+							    ,"The Halls of the Scaraba"
+							    ,"The Abyss Lake Underground Caves"
+							    ,"The Robot Factory"
+							    ,"Outskirts of Kamidal"
+							    ,"Inside the Castles of Glast Heim"
+							    ,"The Abyss Lake Underground Caves"
+							    ,"The Center of Juperos"
+							    ,"The Center of Juperos"
+							    ,"The Dungeons of Thor Volcano"
+							    ,"The Holy Ground of Rachel Sanctuary"
+							    ,"The Ruins of Juperos"
+							    ,"The Ruins of Juperos"
+							    ,"The Thanatos Tower - Upper Level"
+							    ,"The Holy Ground of Rachel Sanctuary"
+							    ,"The Fields of Splendide"
+							    ,"The Fields of Manuk";
+	setarray .maps111130$[1],"abbey01","gefenia02","odin_tem03","dic_dun02","abyss_01","kh_dun02","dic_fild01","gl_cas02","abyss_02","jupe_core","jupe_core","thor_v02","ra_san05","juperos_01","juperos_02","tha_t05","ra_san03","spl_fild01","man_fild01";
+	setarray .mapx111130[1],51        ,203     ,266     ,102     ,264     ,41     ,29     ,199    ,275    ,150    ,150    ,75    ,150    ,53      ,37     ,62     ,10     ,175    ,200;
+	setarray .mapy111130[1],14        ,34      ,280     ,144     ,272     ,198    ,81     ,29     ,270    ,285    ,285    ,205   ,9      ,247     ,63     ,11     ,149    ,186    ,210;
+	setarray .quest111130_1[1],60446  ,60453   ,60461   ,60463   ,60478   ,60490  ,60492  ,60501  ,60469  ,60509  ,60511  ,60513 ,60517  ,60527   ,60529  ,60539  ,60555  ,60559  ,60573;
+	setarray .mobid111130_1[1],1865   ,1370    ,1752    ,2085    ,1714    ,1736   ,1987   ,1163   ,1713   ,1670   ,1672   ,1838  ,1769   ,1676    ,1678   ,1699   ,1773   ,2015   ,1989;
+	setarray .quest111130_2[1],60531  ,60454   ,60462   ,60464   ,60479   ,60491  ,60541  ,60502  ,60470  ,60510  ,60512  ,60514 ,60518  ,60528   ,60530  ,60540  ,60556  ,60560  ,60581;
+	setarray .mobid111130_2[1],1867   ,1374    ,1753    ,2086    ,1717    ,1737   ,1986   ,1208   ,1716   ,1671   ,1673   ,1837  ,1770   ,1677    ,1679   ,1698   ,1774   ,1993   ,1988;
+	setarray .quest111130_3[1],0      ,60576   ,0       ,0       ,0       ,0      ,0      ,0      ,0      ,0      ,60580  ,0     ,0      ,0       ,0      ,60592  ,0      ,60585  ,0;
+	setarray .mobid111130_3[1],0      ,1390    ,0       ,0       ,0       ,0      ,0      ,0      ,0      ,0      ,1668   ,0     ,0      ,0       ,0      ,1295   ,0      ,1992   ,0;
+	// --- 131 ~ 150
+	setarray .location131150$[1],"The Kamidal Tunnel"
+							    ,"The Somatology Laboratory"
+							    ,"The Somatology Laboratory"
+							    ,"The Somatology Laboratory"
+							    ,"The Fields of Manuk"
+							    ,"The Dungeons of Thor Volcano"
+							    ,"The Bridge of Bifrost"
+							    ,"The Bridge of Bifrost";
+	setarray .maps131150$[1],"dic_dun01","lhz_dun02","lhz_dun02","lhz_dun02","man_fild02","thor_v03","bif_fild02","bif_fild01";
+	setarray .mapx131150[1],367       ,150    ,150    ,150   ,206    ,34    ,22     ,161;
+	setarray .mapy131150[1],44        ,18     ,18     ,18    ,219    ,272   ,157    ,329;
+	setarray .quest131150_1[1],60455  ,60480  ,60482  ,60484 ,60493  ,60546 ,60582  ,60586;
+	setarray .mobid131150_1[1],2083   ,1657   ,1652   ,1656  ,2024   ,1833  ,2133   ,2137;
+	setarray .quest131150_2[1],60456  ,60481  ,60483  ,60485 ,60542  ,60547 ,60583  ,60587;
+	setarray .mobid131150_2[1],2084   ,1654   ,1655   ,1653  ,2092   ,1831  ,2132   ,2136;
+	setarray .quest131150_3[1],0      ,0      ,0      ,0     ,0      ,0     ,0      ,0;
+	setarray .mobid131150_3[1],0      ,0      ,0      ,0     ,0      ,0     ,0      ,0;
+	/*********************
+	 * Automation Settings
+	 *********************/
+	 // -- Using a global variable
+	 //    should the server restart, the quests remain same as it was before the restart
+	if( $currentrand7090  <= 0 || $currentrand7090 > (getarraysize(.maps7090$)-1))
+		set $currentrand7090,rand(1,(getarraysize(.maps7090$)-1));
+	if( $currentrand91110 <= 0 || $currentrand91110 > (getarraysize(.maps91110$)-1))
+		set $currentrand91110,rand(1,(getarraysize(.maps91110$)-1));
+	if( $currentrand111130 <= 0 || $currentrand111130 > (getarraysize(.maps111130$)-1))
+		set $currentrand111130,rand(1,(getarraysize(.maps111130$)-1));
+	if( $currentrand131150 <= 0 || $currentrand131150 > (getarraysize(.mapst131150$)-1))
+		set $currentrand131150,rand(1,(getarraysize(.maps131150$)-1));
+	// -- set rewards based on exp.
+	setarray .breward7090[1],strmobinfo(8,.mobid7090_1[$currentrand7090]),strmobinfo(8,.mobid7090_2[$currentrand7090]),strmobinfo(8,.mobid7090_3[$currentrand7090]);
+	setarray .jreward7090[1],strmobinfo(9,.mobid7090_1[$currentrand7090]),strmobinfo(9,.mobid7090_2[$currentrand7090]),strmobinfo(9,.mobid7090_3[$currentrand7090]);
+	setarray .breward91110[1],strmobinfo(8,.mobid91110_1[$currentrand91110]),strmobinfo(8,.mobid91110_2[$currentrand91110]),strmobinfo(8,.mobid91110_3[$currentrand91110]);
+	setarray .jreward91110[1],strmobinfo(9,.mobid91110_1[$currentrand91110]),strmobinfo(9,.mobid91110_2[$currentrand91110]),strmobinfo(9,.mobid91110_3[$currentrand91110]);
+	setarray .breward111130[1],strmobinfo(8,.mobid111130_1[$currentrand111130]),strmobinfo(8,.mobid111130_2[$currentrand111130]),strmobinfo(8,.mobid111130_3[$currentrand111130]);
+	setarray .jreward111130[1],strmobinfo(9,.mobid111130_1[$currentrand111130]),strmobinfo(9,.mobid111130_2[$currentrand111130]),strmobinfo(9,.mobid111130_3[$currentrand111130]);
+	setarray .breward131150[1],strmobinfo(8,.mobid131150_1[$currentrand131150]),strmobinfo(8,.mobid131150_2[$currentrand131150]),strmobinfo(8,.mobid131150_3[$currentrand131150]);
+	setarray .jreward131150[1],strmobinfo(9,.mobid131150_1[$currentrand131150]),strmobinfo(9,.mobid131150_2[$currentrand131150]),strmobinfo(9,.mobid131150_3[$currentrand131150]);
+	// -- EXP Rate Modifier
+	set .bexpdiv,0; // Increase or reduce rate modifier
+	set .jexpdiv,0;
+	// -- Mob Spawn Rate Modifier
+	for(set .@i,1; .@i <= 3; set .@i,.@i+1){
+		if(getd(".mobid7090_"+.@i+"["+$currentrand7090+"]"))
+	    	monster ""+.maps7090$[$currentrand7090],0,0,""+strmobinfo(1,getd(".mobid7090_"+.@i+"["+$currentrand7090+"]")),getd(".mobid7090_"+.@i+"["+$currentrand7090+"]"),.ExtraMobSpawnAmount,strnpcinfo(0)+"::OnRespawnMob7090_"+.@i;
+		if(getd(".mobid91110_"+.@i+"["+$currentrand91110+"]"))
+	    	monster ""+.maps91110$[$currentrand91110],0,0,""+strmobinfo(1,getd(".mobid91110_"+.@i+"["+$currentrand91110+"]")),getd(".mobid91110_"+.@i+"["+$currentrand91110+"]"),.ExtraMobSpawnAmount,strnpcinfo(0)+"::OnRespawnMob91110_"+.@i;
+		if(getd(".mobid111130_"+.@i+"["+$currentrand111130+"]"))
+	    	monster ""+.maps111130$[$currentrand111130],0,0,""+strmobinfo(1,getd(".mobid111130_"+.@i+"["+$currentrand111130+"]")),getd(".mobid111130_"+.@i+"["+$currentrand111130+"]"),.ExtraMobSpawnAmount,strnpcinfo(0)+"::OnRespawnMob111130_"+.@i;
+		if(getd(".mobid131150_"+.@i+"["+$currentrand131150+"]"))
+	    	monster ""+.maps131150$[$currentrand131150],0,0,""+strmobinfo(1,getd(".mobid131150_"+.@i+"["+$currentrand131150+"]")),getd(".mobid131150_"+.@i+"["+$currentrand131150+"]"),.ExtraMobSpawnAmount,strnpcinfo(0)+"::OnRespawnMob131150_"+.@i;
+	}
+	end;
+
+start_script:
 	// - Start of the awesomeness.
 	set .@name$,"[ ^339933Gramps^000000 ]";
 	mes .@name$;
@@ -98,14 +260,19 @@ moc_para01,29,35,4	script	Gramps	4_M_LGTGRAND,{
 				mes "Your mission's location :";
 				mes "^993300"+.@location$+"^000000";
 				mes " ";
+				next;
 				if(.@zenyreq){
 						mes "This service will cost you "+.@zenyreq+" Zeny.";
 						mes "Would you like to proceed?";
 						next;
 						if(select("- Proceed","- Cancel") == 2) close;
+						if(Zeny<.@zenyreq) {
+							mes "I'm sorry you don't have enough Zeny.";
+							mes "Please return when you do.";
+							close;
+						}
 						set Zeny,Zeny - .@zenyreq;
 				}
-				next;
 				mes .@name$;
 				mes "You will now be warped to :";
 				mes "^993300"+.@location$+"^000000";
@@ -146,24 +313,24 @@ moc_para01,29,35,4	script	Gramps	4_M_LGTGRAND,{
 					mes "- Once used, the stones ^FF0000will erase all active un-submitted quests^000000 and the cool-downs for all quest categories. If you haven't completed a quest, you're advised to do so before proceeding -";
 					next;
 					if (select("- Cancel","- Use ^FF0000Reset Stone^000000.") == 1) close;
-					if (countitem(6320) < 1) {
+					if (countitem(6320) < .ResetCost) {
 						mes .@name$;
 						mes "You do not have any ^FF0000Reset Stones^000000, please come back when you do.";
 						close;
 					}
 					mes .@name$;
 					mes "Your quest cool-downs have been removed.";
-					delitem 6320,1;
-					if(questprogress(60444,PLAYTIME) != 0) erasequest 60444;
-					if(questprogress(60448,PLAYTIME) != 0) erasequest 60448;
-					if(questprogress(60449,PLAYTIME) != 0) erasequest 60449;
-					if(questprogress(60450,PLAYTIME) != 0) erasequest 60450;
-					if(questprogress(60486,PLAYTIME) != 0) erasequest 60486;
-					if(questprogress(hunt100,HUNTING) != 0) erasequest hunt100;
-					if(questprogress(hunt200,HUNTING) != 0) erasequest hunt200;
-					if(questprogress(hunt400_1,HUNTING) != 0) erasequest hunt400_1;
-					if(questprogress(hunt400_2,HUNTING) != 0) erasequest hunt400_2;
-					if(questprogress(hunt400_3,HUNTING) != 0) erasequest hunt400_3;
+					delitem 6320,.ResetCost;
+					erasequest 60444;
+					erasequest 60448;
+					erasequest 60449;
+					erasequest 60450;
+					erasequest 60486;
+					erasequest hunt100;
+					erasequest hunt200;
+					erasequest hunt400_1;
+					erasequest hunt400_2;
+					erasequest hunt400_3;
 					set hunt100,0;
 					set hunt100bexp,0;
 					set hunt100jexp,0;
@@ -1143,8 +1310,8 @@ Lstartquest100:
 				mes "Outstanding!";
 				mes "You have successfully completed this mission.";
 				next;
-				set .@bexp,(hunt100bexp * 100)+(hunt100bexp*(.bexpdiv/100));
-				set .@jexp,(hunt100jexp * 100)+(hunt100jexp*(.jexpdiv/100));
+				set .@bexp,(hunt100bexp * .Hunt100Modifier)+(hunt100bexp*(.bexpdiv/100));
+				set .@jexp,(hunt100jexp * .Hunt100Modifier)+(hunt100jexp*(.jexpdiv/100));
 				mes .@name$;
         // Excluding VIP for the time being
 				/* if(isvip())
@@ -1198,7 +1365,7 @@ Lstartquest100:
 				mes .@name$;
 				mes "Please wait ^FF000024 hours^000000 before doing another mission in this category.";
 				mes " ";
-				mes "Although, for ^FF00001x Reset Stone^000000, I can waive off this cool-down for you.";
+				mes "Although, for ^FF0000"+.ResetCost+"x Reset Stone^000000, I can waive off this cool-down for you.";
 				changequest hunt100,.@CDquestId;
 				getexp .@bexp,.@jexp;
 				getitem 6495,(/*isvip()?.Reward_MeritBadgeAmount_100_VIP:*/.Reward_MeritBadgeAmount_100); // Eden Merit Badge
@@ -1279,8 +1446,8 @@ Lstartquest200:
 				mes "Outstanding!";
 				mes "You have successfully completed this mission.";
 				next;
-				set .@bexp,(hunt200bexp * 200)+(hunt200bexp*(.bexpdiv/100));
-				set .@jexp,(hunt200jexp * 200)+(hunt200jexp*(.jexpdiv/100));
+				set .@bexp,(hunt200bexp * .Hunt200Modifier)+(hunt200bexp*(.bexpdiv/100));
+				set .@jexp,(hunt200jexp * .Hunt200Modifier)+(hunt200jexp*(.jexpdiv/100));
 				mes .@name$;
         /* Exluding VIP For the Time Being
 				if(isvip())
@@ -1334,7 +1501,7 @@ Lstartquest200:
 				mes .@name$;
 				mes "Please wait ^FF000024 hours^000000 before doing another mission in this category.";
 				mes " ";
-				mes "Although, for ^FF00001x Reset Stone^000000, I can waive off this cool-down for you.";
+				mes "Although, for ^FF0000"+.ResetCost+"x Reset Stone^000000, I can waive off this cool-down for you.";
 				changequest hunt200,.@CDquestId;
 				getexp .@bexp,.@jexp;
 				getitem 6495,(/*isvip()?.Reward_MeritBadgeAmount_200_VIP:*/.Reward_MeritBadgeAmount_200); // Eden Merit Badge
@@ -1415,8 +1582,8 @@ Lstartquest400_1:
 				mes "Outstanding!";
 				mes "You have successfully completed this mission.";
 				next;
-				set .@bexp,(hunt400_1bexp * 200)+(hunt400_1bexp*(.bexpdiv/100));
-				set .@jexp,(hunt400_1jexp * 200)+(hunt400_1jexp*(.jexpdiv/100));
+				set .@bexp,(hunt400_1bexp * .Hunt400Modifier)+(hunt400_1bexp*(.bexpdiv/100));
+				set .@jexp,(hunt400_1jexp * .Hunt400Modifier)+(hunt400_1jexp*(.jexpdiv/100));
 				mes .@name$;
         /* Excluding VIP for the time being
 				if(isvip())
@@ -1470,7 +1637,7 @@ Lstartquest400_1:
 				mes .@name$;
 				mes "Please wait ^FF000024 hours^000000 before doing another mission in this category.";
 				mes " ";
-				mes "Although, for ^FF00001x Reset Stone^000000, I can waive off this cool-down for you.";
+				mes "Although, for ^FF0000"+.ResetCost+"x Reset Stone^000000, I can waive off this cool-down for you.";
 				changequest hunt400_1,.@CDquestId;
 				getexp .@bexp,.@jexp;
 				getitem 6495,(/*isvip()?.Reward_MeritBadgeAmount_400_VIP:*/.Reward_MeritBadgeAmount_400); // Eden Merit Badge
@@ -1530,8 +1697,8 @@ Lstartquest400_2:
 				mes "Outstanding!";
 				mes "You have successfully completed this mission.";
 				next;
-				set .@bexp,(hunt400_2bexp * 200)+(hunt400_2bexp*(.bexpdiv/100));
-				set .@jexp,(hunt400_2jexp * 200)+(hunt400_2jexp*(.jexpdiv/100));
+				set .@bexp,(hunt400_2bexp * .Hunt400Modifier)+(hunt400_2bexp*(.bexpdiv/100));
+				set .@jexp,(hunt400_2jexp * .Hunt400Modifier)+(hunt400_2jexp*(.jexpdiv/100));
 				mes .@name$;
         /* Excluding VIP for the time being
 				if(isvip())
@@ -1585,7 +1752,7 @@ Lstartquest400_2:
 				mes .@name$;
 				mes "Please wait ^FF000024 hours^000000 before doing another mission in this category.";
 				mes " ";
-				mes "Although, for ^FF00001x Reset Stone^000000, I can waive off this cool-down for you.";
+				mes "Although, for ^FF0000"+.ResetCost+"x Reset Stone^000000, I can waive off this cool-down for you.";
 				changequest hunt400_2,.@CDquestId;
 				getexp .@bexp,.@jexp;
 				getitem 6495,(/*isvip()?.Reward_MeritBadgeAmount_400_VIP:*/.Reward_MeritBadgeAmount_400); // Eden Merit Badge
@@ -1645,8 +1812,8 @@ Lstartquest400_3:
 				mes "Outstanding!";
 				mes "You have successfully completed this mission.";
 				next;
-				set .@bexp,(hunt400_3bexp * 200)+(hunt400_3bexp*(.bexpdiv/100));
-				set .@jexp,(hunt400_3jexp * 200)+(hunt400_3jexp*(.jexpdiv/100));
+				set .@bexp,(hunt400_3bexp * .Hunt400Modifier)+(hunt400_3bexp*(.bexpdiv/100));
+				set .@jexp,(hunt400_3jexp * .Hunt400Modifier)+(hunt400_3jexp*(.jexpdiv/100));
 				mes .@name$;
         /* Excluding VIP for the time being
 				if(isvip())
@@ -1700,7 +1867,7 @@ Lstartquest400_3:
 				mes .@name$;
 				mes "Please wait ^FF000024 hours^000000 before doing another mission in this category.";
 				mes " ";
-				mes "Although, for ^FF00001x Reset Stone^000000, I can waive off this cool-down for you.";
+				mes "Although, for ^FF0000"+.ResetCost+"x Reset Stone^000000, I can waive off this cool-down for you.";
 				changequest hunt400_3,.@CDquestId;
 				getexp .@bexp,.@jexp;
 				getitem 6495,(/*isvip()?.Reward_MeritBadgeAmount_400_VIP:*/.Reward_MeritBadgeAmount_400); // Eden Merit Badge
@@ -1731,162 +1898,6 @@ OnPCLoadMapEvent:
 	else if (strcharinfo(3)=="moc_para01"
 		&& BaseLevel >= 70 && BaseLevel <= 150)
 	showevent 2,1;
-	end;
-
-
-/*****************************************************************************
- *							Main Configuration								 *
- *****************************************************************************/
-
-OnInit:
-	/* * * * * * * * * * * * * * * *
-	 * Configurable Options
-	 * * * * * * * * * * * * * * * */
-	set .ExtraMobSpawnAmount,50; // Amount of extra mobs that spawn
-	// ----- Eden Merit Badge Rewards
-	// --- Hunting 100
-	set .Reward_MeritBadgeAmount_100,1;
-	set .Reward_MeritBadgeAmount_100_VIP,2;
-	// --- Hunting 200
-	set .Reward_MeritBadgeAmount_200,1;
-	set .Reward_MeritBadgeAmount_200_VIP,2;
-	// --- Hunting 400
-	set .Reward_MeritBadgeAmount_400,1; // Official
-	set .Reward_MeritBadgeAmount_400_VIP,2;
-	// ------ Happy Hour Rates -------
-	set .HH_MinBaseExpRate,5; // Minimum Base Exp Rates
-	set .HH_MinJobExpRate,5; // Minimum Job Exp Rate
-	set .HH_MaxBaseExpRate,15; // Max Base Exp Rate
-	set .HH_MaxJobExpRate,15; // Max Job Exp Rate
-	// DO NOT TOUCH BELOW THIS POINT
-	// STATIC CONFIGURATION
-	// --- 70 ~ 90
-	setarray .location7090$[1],"The Underground Forest"
-						,"Hoomga Forests"
-						,"Shrine of Gonryun's Queen"
-						,"Mine Dungeons"
-						,"Einbroch Fields"
-						,"Grim Reaper's Valley"
-						,"Geffen Dungeons"
-						,"Karu, the West Cave"
-						,"The Abyss Lake"
-						,"Turtle Island Dungeons"
-						,"Glast Heim Underprison";
-	setarray .maps7090$[1],"ama_dun02","um_fild02","gon_dun01","ein_dun02","ein_fild08","lhz_fild02","gef_dun02","beach_dun","hu_fild05","tur_dun02","gl_prison1";
-	setarray .mapx7090[1],32		  ,192		  ,163		  ,291		  ,29		   ,36			,215		,245		,43			,167		,150;
-	setarray .mapy7090[1],44		  ,365		  ,267		  ,292		  ,279		   ,224			,63			,65			,208		,23			,14;
-	setarray .quest7090_1[1],60465    ,60472      ,60452      ,60507      ,60525       ,60537       ,60549      ,60571      ,60579      ,60488      ,60557;
-	setarray .mobid7090_1[1],1402     ,1499       ,1417       ,1622       ,1613        ,1215        ,1143       ,1256       ,1715       ,1316       ,1196;
-	setarray .quest7090_2[1],60466    ,60473      ,60451      ,60508      ,60526       ,60538       ,60550      ,60572      ,60584	    ,60489      ,60558;
-	setarray .mobid7090_2[1],1403     ,1498       ,1410       ,1617       ,1619        ,1162        ,1109       ,1148       ,1718       ,1314       ,1257;
-	setarray .quest7090_3[1],0        ,0          ,0          ,60477      ,0	       ,0	        ,0	        ,0	        ,0		    ,0	        ,0;
-	setarray .mobid7090_3[1],0        ,0          ,0          ,1615       ,0           ,0           ,0          ,0          ,0          ,0          ,0;
-	// --- 91 ~ 110
-	setarray .location91110$[1],"Ice Caves"
-							,"Valley of Gyoll"
-							,"Audhumbla Grasslands"
-							,"Fields near Veins"
-							,"Glast Heim Culvert"
-							,"Roads of Nogg"
-							,"Skellington, a Solitary Village in Nifflheim"
-							,"Turtle Palace"
-							,"Roads of Nogg"
-							,"The Plains of Ida"
-							,"Audhumbla Grasslands"
-							,"Portus Luna"
-							,"Inside Morroc's Pyramids";
-	setarray .maps91110$[1],"ice_dun03","nif_fild02","ra_fild04","ve_fild04","gl_sew01","mag_dun02","nif_fild01","tur_dun04","mag_dun01","ra_fild12","ra_fild05","ra_fild06","moc_pryd06";
-	setarray .mapx91110[1],149		   ,167		    ,202	    ,51		    ,258	   ,47		   ,215		    ,100		,126		,175		,336		,202		,192;
-	setarray .mapy91110[1],22		   ,234		    ,208	    ,250		,255	   ,30		   ,229			,192		,68			,200		,268		,214		,8;
-	setarray .quest91110_1[1],60459    ,60467       ,60570      ,60503      ,60535     ,60553      ,60561       ,60588      ,60590      ,60515      ,60543      ,60545      ,60551;
-	setarray .mobid91110_1[1],1778     ,1504        ,1680       ,1780       ,1253      ,1384       ,1509        ,1318       ,1367       ,1627       ,1133		,1135		,1194;
-	setarray .quest91110_2[1],60460    ,60468       ,60445      ,60504      ,60536     ,60554      ,60562       ,60589      ,60591	    ,60516      ,60544		,60575		,60552;
-	setarray .mobid91110_2[1],1777     ,1505        ,1106       ,1781       ,1194      ,1385       ,1510        ,1315       ,1366       ,1782       ,1134		,1282		,1297;
-	setarray .quest91110_3[1],0        ,0           ,0          ,60565      ,0	       ,0	        ,0	        ,0	        ,0		    ,0	        ,0	        ,0	        ,0;
-	setarray .mobid91110_3[1],0        ,0           ,0          ,1836       ,0         ,0           ,0          ,0          ,0          ,0          ,0	        ,0	        ,0;
-	// --- 111 ~ 130
-	setarray .location111130$[1],"The Cursed Monastery"
-								,"Geffenia"
-								,"The Shrines of Odin"
-								,"The Halls of the Scaraba"
-								,"The Abyss Lake Underground Caves"
-								,"The Robot Factory"
-								,"Outskirts of Kamidal"
-								,"Inside the Castles of Glast Heim"
-								,"The Abyss Lake Underground Caves"
-								,"The Center of Juperos"
-								,"The Center of Juperos"
-								,"The Dungeons of Thor Volcano"
-								,"The Holy Ground of Rachel Sanctuary"
-								,"The Ruins of Juperos"
-								,"The Ruins of Juperos"
-								,"The Thanatos Tower - Upper Level"
-								,"The Holy Ground of Rachel Sanctuary"
-								,"The Fields of Splendide"
-								,"The Fields of Manuk";
-	setarray .maps111130$[1],"abbey01","gefenia02","odin_tem03","dic_dun02","abyss_01","kh_dun02","dic_fild01","gl_cas02","abyss_02","jupe_core","jupe_core","thor_v02","ra_san05","juperos_01","juperos_02","tha_t05","ra_san03","spl_fild01","man_fild01";
-	setarray .mapx111130[1],51		  ,203		  ,266		   ,102		   ,264		  ,41		 ,29		  ,199		 ,275		,150		,150		,75		   ,150		  ,53		   ,37			,62		  ,10		 ,175		  ,200;
-	setarray .mapy111130[1],14		  ,34		  ,280		   ,144		   ,272		  ,198		 ,81		  ,29		 ,270		,285		,285		,205	   ,9		  ,247		   ,63			,11		  ,149		 ,186		  ,210;
-	setarray .quest111130_1[1],60446  ,60453	  ,60461       ,60463      ,60478     ,60490     ,60492       ,60501	 ,60469     ,60509      ,60511      ,60513     ,60517	  ,60527	   ,60529	   	,60539	  ,60555     ,60559	   	  ,60573;
-	setarray .mobid111130_1[1],1865   ,1370	   	  ,1752   	   ,2085       ,1714      ,1736      ,1987        ,1163      ,1713      ,1670       ,1672		,1838	   ,1769	  ,1676	   	   ,1678		,1699	  ,1773      ,2015	      ,1989;
-	setarray .quest111130_2[1],60531  ,60454	  ,60462  	   ,60464      ,60479     ,60491     ,60541       ,60502     ,60470	 	,60510      ,60512		,60514	   ,60518	  ,60528	   ,60530		,60540	  ,60556     ,60560	   	  ,60581;
-	setarray .mobid111130_2[1],1867   ,1374	   	  ,1753   	   ,2086       ,1717      ,1737      ,1986        ,1208      ,1716      ,1671       ,1673	    ,1837	   ,1770	  ,1677	 	   ,1679		,1698	  ,1774      ,1993	      ,1988;
-	setarray .quest111130_3[1],0      ,60576	  ,0		   ,0		   ,0		  ,0		 ,0			  ,0	     ,0		 	,0	        ,60580	    ,0	       ,0	 	  ,0	   	   ,0			,60592	  ,0	     ,60585		  ,0;
-	setarray .mobid111130_3[1],0      ,1390	   	  ,0		   ,0		   ,0		  ,0         ,0		      ,0         ,0         ,0          ,1668	    ,0	       ,0	 	  ,0	   	   ,0			,1295	  ,0	     ,1992	      ,0;
-	// --- 131 ~ 150
-	setarray .location131150$[1],"The Kamidal Tunnel"
-								,"The Somatology Laboratory"
-								,"The Somatology Laboratory"
-								,"The Somatology Laboratory"
-								,"The Fields of Manuk"
-								,"The Dungeons of Thor Volcano"
-								,"The Bridge of Bifrost"
-								,"The Bridge of Bifrost";
-	setarray .maps131150$[1],"dic_dun01","lhz_dun02","lhz_dun02","lhz_dun02","man_fild02","thor_v03","bif_fild02","bif_fild01";
-	setarray .mapx131150[1],367			,150		,150		,150		,206		 ,34		,22			 ,161;
-	setarray .mapy131150[1],44			,18			,18			,18			,219		 ,272		,157		 ,329;
-	setarray .quest131150_1[1],60455	,60480		,60482		,60484		,60493		 ,60546		,60582		 ,60586;
-	setarray .mobid131150_1[1],2083		,1657		,1652		,1656		,2024		 ,1833		,2133		 ,2137;
-	setarray .quest131150_2[1],60456	,60481		,60483		,60485		,60542		 ,60547		,60583		 ,60587;
-	setarray .mobid131150_2[1],2084		,1654		,1655		,1653		,2092		 ,1831		,2132		 ,2136;
-	setarray .quest131150_3[1],0		,0			,0			,0			,0			 ,0			,0			 ,0;
-	setarray .mobid131150_3[1],0		,0			,0			,0			,0			 ,0			,0			 ,0;
-	/*********************
-	 * Automation Settings
-	 *********************/
-	 // -- Using a global variable
-	 //    should the server restart, the quests remain same as it was before the restart
-	if( $currentrand7090  <= 0 || $currentrand7090 > (getarraysize(.maps7090$)-1))
-		set $currentrand7090,rand(1,(getarraysize(.maps7090$)-1));
-	if( $currentrand91110 <= 0 || $currentrand91110 > (getarraysize(.maps91110$)-1))
-		set $currentrand91110,rand(1,(getarraysize(.maps91110$)-1));
-	if( $currentrand111130 <= 0 || $currentrand111130 > (getarraysize(.maps111130$)-1))
-		set $currentrand111130,rand(1,(getarraysize(.maps111130$)-1));
-	if( $currentrand131150 <= 0 || $currentrand131150 > (getarraysize(.mapst131150$)-1))
-		set $currentrand131150,rand(1,(getarraysize(.maps131150$)-1));
-	// -- set rewards based on exp.
-	setarray .breward7090[1],strmobinfo(8,.mobid7090_1[$currentrand7090]),strmobinfo(8,.mobid7090_2[$currentrand7090]),strmobinfo(8,.mobid7090_3[$currentrand7090]);
-	setarray .jreward7090[1],strmobinfo(9,.mobid7090_1[$currentrand7090]),strmobinfo(9,.mobid7090_2[$currentrand7090]),strmobinfo(9,.mobid7090_3[$currentrand7090]);
-	setarray .breward91110[1],strmobinfo(8,.mobid91110_1[$currentrand91110]),strmobinfo(8,.mobid91110_2[$currentrand91110]),strmobinfo(8,.mobid91110_3[$currentrand91110]);
-	setarray .jreward91110[1],strmobinfo(9,.mobid91110_1[$currentrand91110]),strmobinfo(9,.mobid91110_2[$currentrand91110]),strmobinfo(9,.mobid91110_3[$currentrand91110]);
-	setarray .breward111130[1],strmobinfo(8,.mobid111130_1[$currentrand111130]),strmobinfo(8,.mobid111130_2[$currentrand111130]),strmobinfo(8,.mobid111130_3[$currentrand111130]);
-	setarray .jreward111130[1],strmobinfo(9,.mobid111130_1[$currentrand111130]),strmobinfo(9,.mobid111130_2[$currentrand111130]),strmobinfo(9,.mobid111130_3[$currentrand111130]);
-	setarray .breward131150[1],strmobinfo(8,.mobid131150_1[$currentrand131150]),strmobinfo(8,.mobid131150_2[$currentrand131150]),strmobinfo(8,.mobid131150_3[$currentrand131150]);
-	setarray .jreward131150[1],strmobinfo(9,.mobid131150_1[$currentrand131150]),strmobinfo(9,.mobid131150_2[$currentrand131150]),strmobinfo(9,.mobid131150_3[$currentrand131150]);
-	// -- EXP Rate Modifier
-	set .bexpdiv,0; // Increase or reduce rate modifier
-	set .jexpdiv,0;
-	// -- Mob Spawn Rate Modifier
-	for(set .@i,1; .@i <= 3; set .@i,.@i+1){
-		if(getd(".mobid7090_"+.@i+"["+$currentrand7090+"]"))
-	    	monster ""+.maps7090$[$currentrand7090],0,0,""+strmobinfo(1,getd(".mobid7090_"+.@i+"["+$currentrand7090+"]")),getd(".mobid7090_"+.@i+"["+$currentrand7090+"]"),.ExtraMobSpawnAmount,strnpcinfo(0)+"::OnRespawnMob7090_"+.@i;
-		if(getd(".mobid91110_"+.@i+"["+$currentrand91110+"]"))
-	    	monster ""+.maps91110$[$currentrand91110],0,0,""+strmobinfo(1,getd(".mobid91110_"+.@i+"["+$currentrand91110+"]")),getd(".mobid91110_"+.@i+"["+$currentrand91110+"]"),.ExtraMobSpawnAmount,strnpcinfo(0)+"::OnRespawnMob91110_"+.@i;
-		if(getd(".mobid111130_"+.@i+"["+$currentrand111130+"]"))
-	    	monster ""+.maps111130$[$currentrand111130],0,0,""+strmobinfo(1,getd(".mobid111130_"+.@i+"["+$currentrand111130+"]")),getd(".mobid111130_"+.@i+"["+$currentrand111130+"]"),.ExtraMobSpawnAmount,strnpcinfo(0)+"::OnRespawnMob111130_"+.@i;
-		if(getd(".mobid131150_"+.@i+"["+$currentrand131150+"]"))
-	    	monster ""+.maps131150$[$currentrand131150],0,0,""+strmobinfo(1,getd(".mobid131150_"+.@i+"["+$currentrand131150+"]")),getd(".mobid131150_"+.@i+"["+$currentrand131150+"]"),.ExtraMobSpawnAmount,strnpcinfo(0)+"::OnRespawnMob131150_"+.@i;
-	}
 	end;
 
 OnRespawnMob7090_1:
@@ -1976,7 +1987,7 @@ OnWhisperGlobal:
 	else if ( compare ( @whispervar0$, "init" ) ) goto OnInit;
 	end;
 
-// ---- Happy Hour EXP Rates
+// ---- Happy Hour EXP Rates start
 OnHour00:
 OnHour04:
 OnHour08:
@@ -1988,7 +1999,7 @@ OnHour20:
 	announce "Gramps : Happy Hour has begun! Get an extra "+.bexpdiv+"% BEXP & "+.jexpdiv+"% JEXP from the quests you turn-in during the hour!",0;
 	end;
 
-// ---- Happy Hour EXP Rates
+// ---- Happy Hour EXP Rates End
 OnHour01:
 OnHour05:
 OnHour09:
